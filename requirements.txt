@@ -12,6 +12,5 @@ pyspark
 pytz
 requests
 streamlit
-sys
 time
 
