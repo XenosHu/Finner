@@ -90,7 +90,7 @@ def get_most_recent_10k_url(cik, ticker):
         except requests.exceptions.RequestException:
             exponential_backoff(attempt)
     else:
-        print(f"Failed to fetch data for {ticker} after multiple attempts")
+        st.write(f"Failed to fetch data for {ticker} after multiple attempts")
         return None
 
     all_forms = pd.DataFrame.from_dict(filing_metadata.json()['filings']['recent'])
@@ -98,7 +98,7 @@ def get_most_recent_10k_url(cik, ticker):
     most_recent_10k_filtered = all_forms.loc[all_forms['form'] == '10-K']
     
     if most_recent_10k_filtered.empty:
-        print(f"No 10-K form found for {ticker}")
+        st.write(f"No 10-K form found for {ticker}")
         return None
 
     most_recent_10k = most_recent_10k_filtered.iloc[0]
