@@ -339,12 +339,15 @@ def main():
                 candlestick_data = fetch_candlestick_data(ticker)
                 candlestick_chart = create_candlestick_chart(candlestick_data, ticker)
                 st.plotly_chart(candlestick_chart)
-            
+
+                color = 'green' if diff >= 0 else 'red'
+
+                # Displaying the information with the specified color
+
                 st.write("**Real-Time Price:**")
                 st.write(f"Value: {data['RealTimePrice']['value']}")
-                st.write(f"Diff: {data['RealTimePrice']['diff']}")
-                st.write(f"Diff Percent: {data['RealTimePrice']['diff_percent']:.2f}%")
-                st.write(f"Color: {data['RealTimePrice']['color']}")
+                st.write(f"Diff: <span style='color:{color}'>{diff}</span>")
+                st.write(f"Diff Percent: <span style='color:{color}'>{diff_percent:.2f}%</span>", unsafe_allow_html=True)
 
         # Displaying core information
         if not core_empty:
