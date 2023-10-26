@@ -336,11 +336,8 @@ def main():
                 st.image(data['Logo_URL'], caption=f"Logo for {data['Symbol']}", width=100)
 
                 st.write("**Chart:**")
-                candlestick_chart = create_candlestick_chart(candlestick_data, ticker)
-                if candlestick_chart:
-                    st.plotly_chart(candlestick_chart)
-                else:
-                    st.warning("Failed to generate candlestick chart.")
+                candlestick_data = fetch_candlestick_data(ticker)
+                create_candlestick_chart(candlestick_data, ticker)
 
                 st.write("**Real-Time Price:**")
                 st.write(f"Value: {data['RealTimePrice']['value']}")
@@ -353,11 +350,19 @@ def main():
             st.write("Core Information:")
             st.write(core)
 
+        # Displaying economic index chart
+        st.write("Economic Index Chart:")
+        economic_index = get_econ_index_data('1980-01-01', time.strftime("%Y-%m-%d", time.localtime(time.time())))
+        create_econ_index_chart(economic_index)
+
         # Display errors or results
         if error:
             st.error(error)
         else:
-            st.success("Data fetched successfully!")
+            st.write("Financial Data:")
+            st.write(data)
+            st.write("Core Data:")
+            st.write(core)
 
-if __name__ == "__main__":
-    main()
+# Run the main function
+main()
