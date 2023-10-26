@@ -163,8 +163,6 @@ def info_other(ticker):
 
 # # 5. Econ index from FRED
 
-get_ipython().system('pip install pandas-datareader')
-
 df = pd.DataFrame()
 
 def get_econ_index_data(start_date,end_date):
