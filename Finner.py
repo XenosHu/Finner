@@ -168,8 +168,8 @@ df = pd.DataFrame()
 
 def get_econ_index_data(start_date,end_date):
 
-    start = datetime.datetime.strptime(start_date, '%Y-%m-%d')
-    end = datetime.datetime.strptime(end_date, '%Y-%m-%d')
+    start = datetime.strptime(start_date, '%Y-%m-%d')
+    end = datetime.strptime(end_date, '%Y-%m-%d')
 
     date_range = pd.date_range(start, end, freq='D')
     df = pd.DataFrame(index=date_range)
