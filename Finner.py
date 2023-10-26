@@ -59,9 +59,6 @@ async def main():
 
 # # 3. EDGAR 10-K Filing and Logo URLs
 
-get_ipython().system('pip install edgar')
-get_ipython().system('pip install sec-api')
-
 def generate_random_email():
     email_domain = "@example.com"
     random_string = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
