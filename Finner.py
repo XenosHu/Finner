@@ -14,7 +14,7 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
 from finnhub import Client as FinnhubClient
 from pandas_datareader import DataReader
-from plotly import colors, express, graph_objects as go, offline
+from plotly import colors, express, graph_objects as go, offline as pyo
 from requests.exceptions import RequestException
 import requests
 import streamlit as st
