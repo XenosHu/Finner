@@ -2,7 +2,6 @@ aiohttp
 asyncio
 datetime
 finnhub-python
-multiprocessing
 nest_asyncio
 numpy
 pandas
