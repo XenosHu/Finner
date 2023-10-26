@@ -11,6 +11,7 @@ psycopg2-binary
 pyspark
 pytz
 requests
+streamlit
 subprocess
 sys
 time
