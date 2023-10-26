@@ -10,9 +10,7 @@ plotly
 psycopg2-binary
 pyspark
 pytz
-random
 requests
-string
 subprocess
 sys
 time
