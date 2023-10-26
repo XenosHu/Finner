@@ -2,64 +2,15 @@
 # coding: utf-8
 
 # # 1. Set-up the environment
-
-# In[1]:
-
-
-get_ipython().system('pip install pyspark')
-get_ipython().system('pip install finnhub-python')
-get_ipython().system('pip install psycopg2-binary')
-get_ipython().system('pip install nest_asyncio')
-get_ipython().system('pip install aiohttp')
-get_ipython().system('pip install Flask plotly')
-get_ipython().system('pip install requests')
-
-
-# In[19]:
-
-
-from platform import python_version
-print(python_version())
-
-
-# In[ ]:
-
-
 import requests
 import pandas as pd
 from datetime import datetime, timedelta
 from multiprocessing import Pool
 import os
 import sys
-os.environ['PYSPARK_PYTHON'] = sys.executable
-os.environ['PYSPARK_DRIVER_PYTHON'] = sys.executable
-
-import pandas as pd
+import subprocess
 from datetime import datetime
 from finnhub import Client as FinnhubClient
-import psycopg2
-from pyspark.sql import SparkSession
-from pyspark.sql.types import StructType, StructField, StringType, DateType, FloatType
-from pyspark import SparkContext, SparkConf
-from pyspark.sql import SQLContext
-
-spark = SparkSession.builder.appName("Pandas to Spark").getOrCreate()
-sc = spark.sparkContext
-
-print("Using Apache Spark Version", spark.version)
-
-
-# In[3]:
-
-
-import subprocess
-
-java_version = subprocess.check_output(['java', '-version'], stderr=subprocess.STDOUT)
-print(java_version.decode())
-
-
-# In[4]:
-
 
 # Display size of the dataframe
 test = pd.DataFrame()
