@@ -286,7 +286,7 @@ def create_econ_index_chart(df):
 def main():
     # Displaying an image with st.image
     image_url = "Finner.png"
-    #st.image(image_url)
+    st.image(image_url)
     # Centering the image using st.markdown and HTML
     centered_image_html = f'<div style="display: flex; justify-content: center;"><img src="{image_url}" style="border-radius: 50%;" width="100%"; height: auto;"></div>'
     st.markdown(centered_image_html, unsafe_allow_html=True)
