@@ -208,11 +208,15 @@ def fetch_candlestick_data(ticker):
 
 def create_candlestick_chart(data, symbol):
     if 't' not in data or 'o' not in data or 'h' not in data or 'l' not in data or 'c' not in data:
+        st.error(f"Invalid candlestick data format for {symbol}")
         return None
 
     df = pd.DataFrame({'t': data['t'], 'o': data['o'], 'h': data['h'], 'l': data['l'], 'c': data['c']})
     df['t'] = pd.to_datetime(df['t'], unit='s')
     df['Date'] = df['t'].dt.strftime('%Y-%m-%d')
+
+    st.write("Candlestick Data:")
+    st.write(df)
 
     fig = go.Figure(data=[go.Candlestick(x=df['Date'],
                                          open=df['o'],
