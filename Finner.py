@@ -279,81 +279,81 @@ def create_econ_index_chart(df):
     st.plotly_chart(fig)
 
 # Streamlit app
-st.title("Financial Data Dashboard")
+def main():
+    st.title("Financial Data Dashboard")
 
-ticker = st.text_input("Enter Ticker Symbol:")
-if st.button("Submit"):
-    error = None
-    data = None
-    core = None
-    core_empty = True
+    ticker = st.text_input("Enter Ticker Symbol:")
+    if st.button("Submit"):
+        error = None
+        data = None
+        core = None
+        core_empty = True
 
-    if not ticker:
-        error = "Please enter a valid ticker symbol."
-    else:
-        with ThreadPoolExecutor(max_workers=3) as executor:
-            future_financial_data = executor.submit(get_financial_data, ticker)
-            future_real_time_price = executor.submit(get_real_time_stock_price, ticker)
-            future_previous_close_price = executor.submit(get_previous_close_price, ticker)
-
-        financial_data, ticker_valid = future_financial_data.result()
-
-        if not ticker_valid:
-            error = "Invalid ticker symbol. Please enter it again."
-        elif financial_data is None:
-            error = "Unable to fetch financial data. Please try again later."
+        if not ticker:
+            error = "Please enter a valid ticker symbol."
         else:
-            data = financial_data
-            real_time_price = future_real_time_price.result()
-            previous_close_price = future_previous_close_price.result()
-            if real_time_price is not None and previous_close_price is not None:
-                price_diff = real_time_price - previous_close_price
-                price_diff_percent = (price_diff / previous_close_price) * 100
-                data['RealTimePrice'] = {
-                    'value': real_time_price,
-                    'diff': price_diff,
-                    'diff_percent': price_diff_percent,
-                    'color': 'green' if price_diff >= 0 else 'red'
-                }
+            with ThreadPoolExecutor(max_workers=3) as executor:
+                future_financial_data = executor.submit(get_financial_data, ticker)
+                future_real_time_price = executor.submit(get_real_time_stock_price, ticker)
+                future_previous_close_price = executor.submit(get_previous_close_price, ticker)
+
+            financial_data, ticker_valid = future_financial_data.result()
+
+            if not ticker_valid:
+                error = "Invalid ticker symbol. Please enter it again."
+            elif financial_data is None:
+                error = "Unable to fetch financial data. Please try again later."
             else:
-                error = "Unable to fetch real-time stock price. Please try again later."
-            core = info_core(ticker)
-            core_empty = core.empty
-        
-        # Displaying financial data in a structured format
-        if data is not None:
-            st.write("Financial Data:")
-            st.write(f"**Symbol:** {data['Symbol']}")
-            st.write(f"**CIK:** {data['CIK']}")
-            st.write(f"**10-K URL:** [Link]({data['10-K_URL']})")
-        
-            # Displaying Logo (resized)
-            st.image(data['Logo_URL'], caption=f"Logo for {data['Symbol']}", width=100)
-        
-            st.write("**Chart:**")
-            st.plotly_chart(create_candlestick_chart(candlestick_data, ticker))
-        
-            st.write("**Real-Time Price:**")
-            st.write(f"Value: {data['RealTimePrice']['value']}")
-            st.write(f"Diff: {data['RealTimePrice']['diff']}")
-            st.write(f"Diff Percent: {data['RealTimePrice']['diff_percent']:.2f}%")
-            st.write(f"Color: {data['RealTimePrice']['color']}")
+                data = financial_data
+                real_time_price = future_real_time_price.result()
+                previous_close_price = future_previous_close_price.result()
+                if real_time_price is not None and previous_close_price is not None:
+                    price_diff = real_time_price - previous_close_price
+                    price_diff_percent = (price_diff / previous_close_price) * 100
+                    data['RealTimePrice'] = {
+                        'value': real_time_price,
+                        'diff': price_diff,
+                        'diff_percent': price_diff_percent,
+                        'color': 'green' if price_diff >= 0 else 'red'
+                    }
+                else:
+                    error = "Unable to fetch real-time stock price. Please try again later."
+                core = info_core(ticker)
+                core_empty = core.empty
 
+            # Displaying financial data in a structured format
+            if data is not None:
+                st.write("Financial Data:")
+                st.write(f"**Symbol:** {data['Symbol']}")
+                st.write(f"**CIK:** {data['CIK']}")
+                st.write(f"**10-K URL:** [Link]({data['10-K_URL']})")
 
-    # Displaying core information
-    if not core_empty:
-        st.write("Core Information:")
-        st.write(core)
+                # Displaying Logo (resized)
+                st.image(data['Logo_URL'], caption=f"Logo for {data['Symbol']}", width=100)
 
-    # Displaying economic index chart
-    st.write("Economic Index Chart:")
-    create_econ_index_chart(economic_index)
-    # Display errors or results
-    if error:
-        st.error(error)
-    else:
-        st.write("Financial Data:")
-        st.write(data)
-        st.write("Core Data:")
-        st.write(core)
+                st.write("**Chart:**")
+                candlestick_chart = create_candlestick_chart(candlestick_data, ticker)
+                if candlestick_chart:
+                    st.plotly_chart(candlestick_chart)
+                else:
+                    st.warning("Failed to generate candlestick chart.")
 
+                st.write("**Real-Time Price:**")
+                st.write(f"Value: {data['RealTimePrice']['value']}")
+                st.write(f"Diff: {data['RealTimePrice']['diff']}")
+                st.write(f"Diff Percent: {data['RealTimePrice']['diff_percent']:.2f}%")
+                st.write(f"Color: {data['RealTimePrice']['color']}")
+
+        # Displaying core information
+        if not core_empty:
+            st.write("Core Information:")
+            st.write(core)
+
+        # Display errors or results
+        if error:
+            st.error(error)
+        else:
+            st.success("Data fetched successfully!")
+
+if __name__ == "__main__":
+    main()
