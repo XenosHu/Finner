@@ -290,7 +290,8 @@ def main():
 
     with cent_co:
         st.image(image_url)
-        st.title("Financial Data Dashboard For Nasdaq Tickers")
+    
+    st.title("Financial Data Dashboard For Nasdaq Tickers")
 
     ticker = st.text_input("Enter Ticker Symbol:")
     if st.button("Submit"):
