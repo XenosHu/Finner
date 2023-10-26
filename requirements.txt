@@ -1,0 +1,10 @@
+aiohttp
+finnhub-python
+multiprocessing
+nest_asyncio
+pandas
+plotly
+psycopg2-binary
+pyspark
+pytz
+requests
