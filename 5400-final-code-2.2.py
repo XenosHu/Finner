@@ -12,28 +12,6 @@ import subprocess
 from datetime import datetime
 from finnhub import Client as FinnhubClient
 
-# Display size of the dataframe
-test = pd.DataFrame()
-import math
-def format_size(size_bytes):
-    if size_bytes == 0:
-        return "0B"
-    size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
-    i = int(math.floor(math.log(size_bytes, 1024)))
-    p = math.pow(1024, i)
-    s = round(size_bytes / p, 2)
-    return f"{s} {size_name[i]}"
-
-size_bytes = test.memory_usage().sum()
-formatted_size = format_size(size_bytes)
-print(f"Size of the DataFrame: {formatted_size}")
-
-
-# # 2. Nasdaq Ticker Prices
-
-# In[5]:
-
-
 ticker_name = pd.DataFrame(pd.read_csv("nasdaq-listed.csv"))
 ticker_name
 
