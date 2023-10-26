@@ -340,7 +340,7 @@ def main():
                 candlestick_chart = create_candlestick_chart(candlestick_data, ticker)
                 st.plotly_chart(candlestick_chart)
 
-                color = 'green' if diff >= 0 else 'red'
+                color = 'green' if data['RealTimePrice']['diff'] >= 0 else 'red'
 
                 # Displaying the information with the specified color
 
