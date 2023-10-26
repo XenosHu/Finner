@@ -281,6 +281,7 @@ def create_econ_index_chart(df):
     st.plotly_chart(fig)
 
 # Streamlit app
+# Streamlit app
 st.title("Financial Data Dashboard")
 
 ticker = st.text_input("Enter Ticker Symbol:")
@@ -333,15 +334,18 @@ if st.button("Submit"):
         st.write(f"**Symbol:** {data['Symbol']}")
         st.write(f"**CIK:** {data['CIK']}")
         st.write(f"**10-K URL:** [Link]({data['10-K_URL']})")
-        st.write(f"**Logo URL:** [Logo]({data['Logo_URL']})")
+        
+        # Displaying Logo
+        st.image(data['Logo_URL'], caption=f"Logo for {data['Symbol']}", use_column_width=True)
+
         st.write("**Chart:**")
-        st.markdown(data['Chart'], unsafe_allow_html=True)
+        st.components.v1.html(data['Chart'], height=600, scrolling=True)
+        
         st.write("**Real-Time Price:**")
         st.write(f"Value: {data['RealTimePrice']['value']}")
         st.write(f"Diff: {data['RealTimePrice']['diff']}")
         st.write(f"Diff Percent: {data['RealTimePrice']['diff_percent']:.2f}%")
         st.write(f"Color: {data['RealTimePrice']['color']}")
-
     # Display errors or results
     if error:
         st.error(error)
