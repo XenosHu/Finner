@@ -21,9 +21,7 @@ import subprocess
 import sys
 import time
 
-
 ticker_name = pd.DataFrame(pd.read_csv("nasdaq-listed.csv"))
-ticker_name
 
 nest_asyncio.apply()  
 
@@ -36,7 +34,7 @@ async def get_data(symbol, start_date, end_date):
         response = await loop.run_in_executor(None, requests.get, url)
         data = response.json()
     except Exception as e:
-        print(f"Error fetching data for symbol {symbol}: {e}")
+        st.error(f"Error fetching data for symbol {symbol}: {e}")
         return None
     return symbol, data
 
@@ -63,13 +61,7 @@ async def main():
 
     return combined_data
 
-loop  = asyncio.get_event_loop()
-combined_data = loop.run_until_complete(main())
-combined_data
-
-
 # # 3. EDGAR 10-K Filing and Logo URLs
-
 
 get_ipython().system('pip install edgar')
 get_ipython().system('pip install sec-api')
@@ -124,7 +116,6 @@ def get_cik_for_ticker(ticker):
 
 # # 4. Companies' core info
 
-
 def comp_info(ticker):
     API_KEY = 'NJVQJFLY9SSGTP55'
     url = f'https://www.alphavantage.co/query?function=OVERVIEW&symbol={ticker}&apikey={API_KEY}'
@@ -175,11 +166,7 @@ def info_other(ticker):
     other = other.transpose()
     return(other)
 
-
-# # 5. Econ index from FRED using Postgresql
-
-# In[11]:
-
+# # 5. Econ index from FRED
 
 get_ipython().system('pip install pandas-datareader')
 
@@ -211,18 +198,7 @@ def get_econ_index_data(start_date,end_date):
 
     return df
 
-
 # # 6. Interactive UI using Flask
-
-get_ipython().system('pip install flask')
-get_ipython().system('pip install flask-ngrok')
-get_ipython().system('pip install plotly')
-
-get_ipython().system('pip install plotly>=5.0.0')
-get_ipython().system('pip install --upgrade flask-ngrok')
-
-
-os.environ['WERKZEUG_RUN_MAIN'] = 'true'
 
 def get_data(symbol, start_date, end_date):
     api_key = 'cgn4mghr01qhveut0q00cgn4mghr01qhveut0q0g' 
@@ -260,10 +236,11 @@ def create_candlestick_chart(data, symbol):
 
     return chart_div
 
+# Function to get financial data
 def get_financial_data(ticker):
     cik = get_cik_for_ticker(ticker)
     if cik is None:
-        print(f"Wrong ticker! {ticker}")
+        st.error(f"Wrong ticker! {ticker}")
         return None, False
 
     url_10k = get_most_recent_10k_url(cik, ticker)
@@ -276,6 +253,7 @@ def get_financial_data(ticker):
     else:
         return None, True
 
+# Function to get previous close price
 def get_previous_close_price(ticker):
     api_key = 'cgn4mghr01qhveut0q00cgn4mghr01qhveut0q0g'
     url = f'https://finnhub.io/api/v1/quote?symbol={ticker}&token={api_key}'
@@ -285,7 +263,8 @@ def get_previous_close_price(ticker):
         return stock_data['pc']
     else:
         return None
-    
+
+# Function to get real-time stock price
 def get_real_time_stock_price(ticker):
     api_key = 'cgn4mghr01qhveut0q00cgn4mghr01qhveut0q0g'
     url = f'https://finnhub.io/api/v1/quote?symbol={ticker}&token={api_key}'
@@ -296,6 +275,7 @@ def get_real_time_stock_price(ticker):
     else:
         return None
 
+# Function to create economic index chart
 def create_econ_index_chart(df):
     fig = px.line(df, 
                   x=df.index, 
@@ -304,252 +284,61 @@ def create_econ_index_chart(df):
                   labels={'value': 'Value', 'index': 'Date'},
                   width=800, height=600)
     
-    return fig.to_html(full_html=False, include_plotlyjs='cdn')
-    
-app = Flask(__name__, template_folder="my_templates")
+    st.plotly_chart(fig)
 
-@app.route('/', methods=['GET', 'POST'])
-def index():
+# Streamlit app
+st.title("Financial Data Dashboard")
+
+ticker = st.text_input("Enter Ticker Symbol:")
+if st.button("Submit"):
     error = None
     data = None
     core = None
     core_empty = True
 
-    if request.method == 'POST':
-        ticker = request.form['ticker'].upper()
-        if not ticker:
-            error = "Please enter a valid ticker symbol."
+    if not ticker:
+        error = "Please enter a valid ticker symbol."
+    else:
+        with ThreadPoolExecutor(max_workers=3) as executor:
+            future_financial_data = executor.submit(get_financial_data, ticker)
+            future_real_time_price = executor.submit(get_real_time_stock_price, ticker)
+            future_previous_close_price = executor.submit(get_previous_close_price, ticker)
+
+        financial_data, ticker_valid = future_financial_data.result()
+
+        if not ticker_valid:
+            error = "Invalid ticker symbol. Please enter it again."
+        elif financial_data is None:
+            error = "Unable to fetch financial data. Please try again later."
         else:
-            with ThreadPoolExecutor(max_workers=3) as executor:
-                future_financial_data = executor.submit(get_financial_data, ticker)
-                future_real_time_price = executor.submit(get_real_time_stock_price, ticker)
-                future_previous_close_price = executor.submit(get_previous_close_price, ticker)
-
-            financial_data, ticker_valid = future_financial_data.result()
-
-            if not ticker_valid:
-                error = "Invalid ticker symbol. Please enter it again."
-            elif financial_data is None:
-                error = "Unable to fetch financial data. Please try again later."
+            data = financial_data
+            real_time_price = future_real_time_price.result()
+            previous_close_price = future_previous_close_price.result()
+            if real_time_price is not None and previous_close_price is not None:
+                price_diff = real_time_price - previous_close_price
+                price_diff_percent = (price_diff / previous_close_price) * 100
+                data['RealTimePrice'] = {
+                    'value': real_time_price,
+                    'diff': price_diff,
+                    'diff_percent': price_diff_percent,
+                    'color': 'green' if price_diff >= 0 else 'red'
+                }
             else:
-                data = financial_data
-                real_time_price = future_real_time_price.result()
-                previous_close_price = future_previous_close_price.result()
-                if real_time_price is not None and previous_close_price is not None:
-                    price_diff = real_time_price - previous_close_price
-                    price_diff_percent = (price_diff / previous_close_price) * 100
-                    data['RealTimePrice'] = {
-                        'value': real_time_price,
-                        'diff': price_diff,
-                        'diff_percent': price_diff_percent,
-                        'color': 'green' if price_diff >= 0 else 'red'
-                    }
-                else:
-                    error = "Unable to fetch real-time stock price. Please try again later."
-                core = info_core(ticker)
-                core_empty = core.empty
+                error = "Unable to fetch real-time stock price. Please try again later."
+            core = info_core(ticker)
+            core_empty = core.empty
 
     start_date = '1980-01-01'
     end_date = time.strftime("%Y-%m-%d", time.localtime(time.time()))
-    economic_index = get_econ_index_data(start_date,end_date)
-    econ_index_chart = create_econ_index_chart(economic_index)
+    economic_index = get_econ_index_data(start_date, end_date)
+    create_econ_index_chart(economic_index)
 
-    return render_template('index.html', data=data, core=core, core_empty=core_empty, economic_index=economic_index, econ_index_chart=econ_index_chart, error=error)
-
-if __name__ == '__main__':
-    app.run(debug=True)
-
-
-# create a database engine 
-engine = create_engine('postgresql://postgres:12345Abcde@localhost:5432/finance_data_5400x')
-
-# create a session factory
-Session = sessionmaker(bind=engine)
-Base = declarative_base()
-
-class Core(Base):
-    __tablename__ = 'core'
-
-    ticker_id = Column(String, primary_key=True)
-    Symbol = Column(String, name="Symbol")
-    Name = Column(String, name="Name")
-    AssetType = Column(String, name="AssetType")
-    Description = Column(Text, name="Description")
-    Exchange = Column(String, name="Exchange")
-    Currency = Column(String, name="Currency")
-    Country = Column(String, name="Country")
-    Sector = Column(String, name="Sector")
-    Industry = Column(String, name="Industry")
-    Address = Column(String, name="Address")
-    FiscalYearEnd = Column(String, name="FiscalYearEnd")
-    LatestQuarter = Column(String, name="LatestQuarter")
-    MarketCapitalization = Column(BigInteger, name="MarketCapitalization")
-    EBITDA = Column(BigInteger, name="EBITDA")
-    PERatio = Column(Float, name="PERatio")
-    PEGRatio = Column(Float, name="PEGRatio")
-    BookValue = Column(Float, name="BookValue")
-    DividendPerShare = Column(Float, name="DividendPerShare")
-    DividendYield = Column(Float, name="DividendYield")
-    EPS = Column(Float, name="EPS")
-    Beta = Column(Float, name="Beta")
-    Week52High = Column(Float, name="Week52High")
-    Week52Low = Column(Float, name="Week52Low")
-    Day50MovingAverage = Column(Float, name="Day50MovingAverage")
-    Day200MovingAverage = Column(Float, name="Day200MovingAverage")
-    SharesOutstanding = Column(BigInteger, name="SharesOutstanding")
-    
-class TickerInfo(Base):
-    __tablename__ = 'ticker_info'
-
-    ticker_id = Column(Integer, ForeignKey('core.ticker_id'), primary_key=True)
-    Symbol = Column(String)
-    Date = Column(TIMESTAMP)
-    CIK = Column(Integer)
-    url_10k = Column(Text)
-    logo_url = Column(Text)
-
-    core = relationship("Core", back_populates="ticker_info")
-    
-class TickerData(Base):
-    __tablename__ = 'ticker_data'
-
-    ticker_id = Column(Integer, ForeignKey('core.ticker_id'), primary_key=True)
-    Symbol = Column(String)
-    Date = Column(TIMESTAMP)
-    Year_mon = Column(String)
-    Close = Column(Float)
-    High = Column(Float)
-    Low = Column(Float)
-    Open = Column(Float)
-    S = Column(String)
-    Volume = Column(Float)
-
-    core = relationship("Core", back_populates="ticker_data")
-    
-Core.ticker_info = relationship("TickerInfo", order_by=TickerInfo.ticker_id, back_populates="core")
-Core.ticker_data = relationship("TickerData", order_by=TickerData.ticker_id, back_populates="core")
-
-Base.metadata.create_all(engine)
-
-#---------------------------------------------------------------------------------------------------------------------------------------------
-
-def get_info_core(ticker):
-    df = comp_info(ticker)
-    
-    core = {
-        'Symbol' : ticker,
-        'Name': df.loc['Name']['Value'],
-        'AssetType': df.loc['AssetType']['Value'],
-        'Description': df.loc['Description']['Value'],
-        'Exchange': df.loc['Exchange']['Value'],
-        'Currency': df.loc['Currency']['Value'],
-        'Country': df.loc['Country']['Value'],
-        'Sector': df.loc['Sector']['Value'],
-        'Industry': df.loc['Industry']['Value'],
-        'Address': df.loc['Address']['Value'],
-        'FiscalYearEnd': df.loc['FiscalYearEnd']['Value'],
-        'LatestQuarter': df.loc['LatestQuarter']['Value'],
-        'MarketCapitalization': df.loc['MarketCapitalization']['Value'],
-        'EBITDA': df.loc['EBITDA']['Value'],
-        'PERatio': df.loc['PERatio']['Value'],
-        'PEGRatio': df.loc['PEGRatio']['Value'],
-        'BookValue': df.loc['BookValue']['Value'],
-        'DividendPerShare': df.loc['DividendPerShare']['Value'],
-        'DividendYield': df.loc['DividendYield']['Value'],
-        'EPS': df.loc['EPS']['Value'],
-        'Beta': df.loc['Beta']['Value'],
-        'Week52High': df.loc['52WeekHigh']['Value'],  # Updated key name
-        'Week52Low': df.loc['52WeekLow']['Value'],    # Updated key name
-        'Day50MovingAverage': df.loc['50DayMovingAverage']['Value'],
-        'Day200MovingAverage': df.loc['200DayMovingAverage']['Value'],
-        'SharesOutstanding': df.loc['SharesOutstanding']['Value']
-    }
-
-    return(core)
-
-def get_ticker_info(ticker):
-    cik = get_cik_for_ticker(ticker)
-    if cik is None:
-        print(f"Wrong ticker! {ticker}")
-        return None, False
-
-    url_10k = get_most_recent_10k_url(cik, ticker)
-    logo_url = f'https://universal.hellopublic.com/companyLogos/{ticker}@2x.png'
-
-    if url_10k is not None:
-        return {'Symbol': ticker, 'CIK': cik, '10-K_URL': url_10k, 'Logo_URL': logo_url}, True
+    # Display errors or results
+    if error:
+        st.error(error)
     else:
-        return None, True
-    
-def get_ticker_data(ticker):
-    now = time.strftime("%Y-%m-%d", time.localtime(time.time()))
-    start_date = int(datetime.strptime('1980-01-01', '%Y-%m-%d').timestamp())
-    end_date = int(datetime.strptime(now, '%Y-%m-%d').timestamp())
-
-    url = f'https://finnhub.io/api/v1/stock/candle?symbol={ticker}&resolution=D&from={start_date}&to={end_date}&token={API_KEY}'
-    
-    try:
-        response = requests.get(url)
-        data = response.json()
-    except Exception as e:
-        print(f"Error fetching data for symbol {ticker}: {e}")
-        return None
-
-    if 't' in data and 'o' in data and 'h' in data and 'l' in data and 'c' in data and 'v' in data:
-        df = pd.DataFrame(data)
-        df['t'] = pd.to_datetime(df['t'], unit='s')
-        df['Symbol'] = ticker
-        df.rename(columns={'t': 'Date', 'o': 'Open', 'h': 'High', 'l': 'Low', 'c': 'Close', 'v': 'Volume'}, inplace=True)
-        return df
-    else:
-        return None
-
-#---------------------------------------------------------------------------------------------------------------------------------------------
-
-def get_financial_data(ticker):
-    # Retrieve data from API
-    core_data = get_info_core(ticker)
-    #core_data['Symbol'] = ticker
-    ticker_info_data = get_ticker_info(ticker)
-    ticker_history_data = get_ticker_data(ticker)
-
-    # Add data to the database
-    session = Session()
-    try:
-        # Add core_data
-        core = Core(**core_data)
-        session.add(core)
-        session.flush()  # To get the ticker_id for foreign key relationships
-
-        # Add ticker_info_data
-        ticker_info_data['ticker_id'] = core.ticker_id
-        ticker_info = TickerInfo(**ticker_info_data)
-        session.add(ticker_info)
-
-        # Add ticker_history_data
-        for year_month, history in ticker_history_data.items():
-            history_data = {
-                'ticker_id': core.ticker_id,
-                'Symbol': ticker_symbol,
-                'Date': history['Date'],
-                'Year_mon': year_month,
-                'Close': history['Close'],
-                'High': history['High'],
-                'Low': history['Low'],
-                'Open': history['Open'],
-                'S': history['S'],
-                'Volume': history['Volume']
-            }
-            ticker_data = TickerData(**history_data)
-            session.add(ticker_data)
-
-        session.commit()
-    except SQLAlchemyError as e:
-        print(f"Error: {e}")
-        session.rollback()
-    finally:
-        session.close()
-
-# Example usage:
-get_financial_data('AAPL')
+        st.write("Financial Data:")
+        st.write(data)
+        st.write("Core Data:")
+        st.write(core)
 
