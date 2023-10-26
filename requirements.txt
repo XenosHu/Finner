@@ -1,4 +1,5 @@
 aiohttp
+asyncio
 datetime
 finnhub
 finnhub-python
@@ -6,9 +7,15 @@ multiprocessing
 nest_asyncio
 numpy
 pandas
+pandas_datareader
 plotly
 psycopg2-binary
 pyspark
 pytz
+random
 requests
+string
 subprocess
+sys
+time
+
