@@ -331,14 +331,15 @@ def main():
                 st.write(f"**Symbol:** {data['Symbol']}")
                 st.write(f"**CIK:** {data['CIK']}")
                 st.write(f"**10-K URL:** [Link]({data['10-K_URL']})")
-
+            
                 # Displaying Logo (resized)
                 st.image(data['Logo_URL'], caption=f"Logo for {data['Symbol']}", width=100)
-
+            
                 st.write("**Chart:**")
                 candlestick_data = fetch_candlestick_data(ticker)
-                create_candlestick_chart(candlestick_data, ticker)
-
+                candlestick_chart = create_candlestick_chart(candlestick_data, ticker)
+                st.plotly_chart(candlestick_chart)
+            
                 st.write("**Real-Time Price:**")
                 st.write(f"Value: {data['RealTimePrice']['value']}")
                 st.write(f"Diff: {data['RealTimePrice']['diff']}")
