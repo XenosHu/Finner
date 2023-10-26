@@ -346,8 +346,8 @@ def main():
 
                 st.write("**Real-Time Price:**")
                 st.write(f"Value: {data['RealTimePrice']['value']}")
-                st.write(f"Diff: <span style='color:{color}'>{diff}</span>")
-                st.write(f"Diff Percent: <span style='color:{color}'>{diff_percent:.2f}%</span>", unsafe_allow_html=True)
+                st.write(f"Diff: <span style='color:{color}'>{'diff'}</span>")
+                st.write(f"Diff Percent: <span style='color:{color}'>{'diff_percent':.2f}%</span>", unsafe_allow_html=True)
 
         # Displaying core information
         if not core_empty:
