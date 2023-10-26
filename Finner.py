@@ -223,12 +223,10 @@ def create_candlestick_chart(data, symbol):
     fig.update_layout(title=f"{symbol} Stock Prices",
                       xaxis_title="Date",
                       yaxis_title="Price ($)",
-                      xaxis_rangeslider_visible=False
-                      )
+                      xaxis_rangeslider_visible=False)
 
-    chart_div = pyo.plot(fig, output_type='div', include_plotlyjs=False)
-
-    return chart_div
+    # Return the Plotly Figure directly
+    return fig
 
 # Function to get financial data
 def get_financial_data(ticker):
@@ -321,29 +319,26 @@ if st.button("Submit"):
                 error = "Unable to fetch real-time stock price. Please try again later."
             core = info_core(ticker)
             core_empty = core.empty
-
-    start_date = '1980-01-01'
-    end_date = time.strftime("%Y-%m-%d", time.localtime(time.time()))
-    economic_index = get_econ_index_data(start_date, end_date)
-
-    # Displaying financial data in a structured format
-    if data is not None:
-        st.write("Financial Data:")
-        st.write(f"**Symbol:** {data['Symbol']}")
-        st.write(f"**CIK:** {data['CIK']}")
-        st.write(f"**10-K URL:** [Link]({data['10-K_URL']})")
         
-        # Displaying Logo (resized)
-        st.image(data['Logo_URL'], caption=f"Logo for {data['Symbol']}", width=100)
-
-        st.write("**Chart:**")
-        st.components.v1.html(data['Chart'], height=600, scrolling=True)
+        # Displaying financial data in a structured format
+        if data is not None:
+            st.write("Financial Data:")
+            st.write(f"**Symbol:** {data['Symbol']}")
+            st.write(f"**CIK:** {data['CIK']}")
+            st.write(f"**10-K URL:** [Link]({data['10-K_URL']})")
         
-        st.write("**Real-Time Price:**")
-        st.write(f"Value: {data['RealTimePrice']['value']}")
-        st.write(f"Diff: {data['RealTimePrice']['diff']}")
-        st.write(f"Diff Percent: {data['RealTimePrice']['diff_percent']:.2f}%")
-        st.write(f"Color: {data['RealTimePrice']['color']}")
+            # Displaying Logo (resized)
+            st.image(data['Logo_URL'], caption=f"Logo for {data['Symbol']}", width=100)
+        
+            st.write("**Chart:**")
+            st.plotly_chart(create_candlestick_chart(candlestick_data, ticker))
+        
+            st.write("**Real-Time Price:**")
+            st.write(f"Value: {data['RealTimePrice']['value']}")
+            st.write(f"Diff: {data['RealTimePrice']['diff']}")
+            st.write(f"Diff Percent: {data['RealTimePrice']['diff_percent']:.2f}%")
+            st.write(f"Color: {data['RealTimePrice']['color']}")
+
 
     # Displaying core information
     if not core_empty:
