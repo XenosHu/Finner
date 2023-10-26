@@ -14,9 +14,7 @@ from finnhub import Client as FinnhubClient
 from pandas_datareader import DataReader
 from plotly import colors, express, graph_objects, offline
 from requests.exceptions import RequestException
-import random
 import requests
-import string
 import subprocess
 import sys
 import time
