@@ -327,6 +327,21 @@ if st.button("Submit"):
     economic_index = get_econ_index_data(start_date, end_date)
     create_econ_index_chart(economic_index)
 
+    # Displaying financial data in a structured format
+    if data is not None:
+        st.write("Financial Data:")
+        st.write(f"**Symbol:** {data['Symbol']}")
+        st.write(f"**CIK:** {data['CIK']}")
+        st.write(f"**10-K URL:** [Link]({data['10-K_URL']})")
+        st.write(f"**Logo URL:** [Logo]({data['Logo_URL']})")
+        st.write("**Chart:**")
+        st.markdown(data['Chart'], unsafe_allow_html=True)
+        st.write("**Real-Time Price:**")
+        st.write(f"Value: {data['RealTimePrice']['value']}")
+        st.write(f"Diff: {data['RealTimePrice']['diff']}")
+        st.write(f"Diff Percent: {data['RealTimePrice']['diff_percent']:.2f}%")
+        st.write(f"Color: {data['RealTimePrice']['color']}")
+
     # Display errors or results
     if error:
         st.error(error)
