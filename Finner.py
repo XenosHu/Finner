@@ -5,6 +5,8 @@
 import asyncio
 import nest_asyncio
 import numpy as np
+import random
+import string
 import os
 import pandas as pd
 import pandas_datareader as pdr
