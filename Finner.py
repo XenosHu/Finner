@@ -356,14 +356,5 @@ def main():
         economic_index = get_econ_index_data('1980-01-01', time.strftime("%Y-%m-%d", time.localtime(time.time())))
         create_econ_index_chart(economic_index)
 
-        # Display errors or results
-        if error:
-            st.error(error)
-        else:
-            st.write("Financial Data:")
-            st.write(data)
-            st.write("Core Data:")
-            st.write(core)
-
 # Run the main function
 main()
