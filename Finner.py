@@ -16,7 +16,6 @@ from plotly import colors, express, graph_objects, offline
 from requests.exceptions import RequestException
 import requests
 import streamlit
-import subprocess
 import sys
 import time
 
