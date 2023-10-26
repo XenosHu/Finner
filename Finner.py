@@ -16,7 +16,6 @@ from plotly import colors, express, graph_objects, offline
 from requests.exceptions import RequestException
 import requests
 import streamlit
-import sys
 import time
 
 ticker_name = pd.DataFrame(pd.read_csv("nasdaq-listed.csv"))
