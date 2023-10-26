@@ -287,10 +287,10 @@ def main():
     # Displaying an image with st.image
     image_url = "Finner.png"
     st.image(image_url)
-    
     # Centering the image using st.markdown and HTML
-    centered_image_html = f'<div style="display: flex; justify-content: center;"><img src="{image_url}" alt="Your Image" style="width: auto; max-width: 100%; height: auto;"></div>'
+    centered_image_html = f'<div style="display: flex; justify-content: center;"><img src="{image_url}" style="width: auto; max-width: 100%; height: auto;"></div>'
     st.markdown(centered_image_html, unsafe_allow_html=True)
+    
     st.title("Finner: Financial Data Dashboard For Nasdaq Tickers")
 
     ticker = st.text_input("Enter Ticker Symbol:")
