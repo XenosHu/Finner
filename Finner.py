@@ -284,7 +284,7 @@ def create_econ_index_chart(df):
 
 # Streamlit app
 def main():
-    st.title("Financial Data Dashboard")
+    st.title("Finner: Financial Data Dashboard")
 
     ticker = st.text_input("Enter Ticker Symbol:")
     if st.button("Submit"):
