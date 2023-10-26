@@ -60,7 +60,7 @@ async def main():
 
     return combined_data
 
-# # 3. EDGAR Annual_Report Filing and Logo URLs
+# # 3. EDGAR 10-K Filing and Logo URLs
 
 def generate_random_email():
     email_domain = "@example.com"
@@ -91,10 +91,10 @@ def get_most_recent_10k_url(cik, ticker):
 
     all_forms = pd.DataFrame.from_dict(filing_metadata.json()['filings']['recent'])
 
-    most_recent_10k_filtered = all_forms.loc[all_forms['form'] == 'Annual_Report']
+    most_recent_10k_filtered = all_forms.loc[all_forms['form'] == '10-K']
     
     if most_recent_10k_filtered.empty:
-        st.write(f"No Annual_Report form found for {ticker}")
+        st.write(f"No 10-K form found for {ticker}")
         return None
 
     most_recent_10k = most_recent_10k_filtered.iloc[0]
@@ -245,7 +245,7 @@ def get_financial_data(ticker):
     chart = create_candlestick_chart(candlestick_data, ticker)
 
     if url_10k is not None and chart is not None:
-        return {'Symbol': ticker, 'CIK': cik, 'Annual_Report_URL': url_10k, 'Logo_URL': logo_url, 'Chart': chart}, True
+        return {'Symbol': ticker, 'CIK': cik, '10-K_URL': url_10k, 'Logo_URL': logo_url, 'Chart': chart}, True
     else:
         return None, True
 
@@ -330,7 +330,7 @@ def main():
                 st.write("Financial Data:")
                 st.write(f"**Symbol:** {data['Symbol']}")
                 st.write(f"**CIK:** {data['CIK']}")
-                st.write(f"**Annual_Report URL:** [Link]({data['Annual_Report_URL']})")
+                st.write(f"**10-K URL:** [Link]({data['10-K_URL']})")
             
                 # Displaying Logo (resized)
                 st.markdown(f'<img src="{data["Logo_URL"]}" alt="Logo for {data["Symbol"]}" style="border-radius:50%;" width=100>', unsafe_allow_html=True)
