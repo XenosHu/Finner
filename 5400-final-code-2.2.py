@@ -2,29 +2,28 @@
 # coding: utf-8
 
 # # 1. Set-up the environment
-import requests
-import pandas as pd
-from datetime import datetime, timedelta
-from multiprocessing import Pool
+import asyncio
+import nest_asyncio
+import numpy as np
 import os
-import sys
-import subprocess
-from datetime import datetime
+import pandas as pd
+import pandas_datareader as pdr
+from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime, timedelta
 from finnhub import Client as FinnhubClient
+from pandas_datareader import DataReader
+from plotly import colors, express, graph_objects, offline
+from requests.exceptions import RequestException
+import random
+import requests
+import string
+import subprocess
+import sys
+import time
+
 
 ticker_name = pd.DataFrame(pd.read_csv("nasdaq-listed.csv"))
 ticker_name
-
-
-# In[6]:
-
-
-import asyncio
-import time
-import requests
-import nest_asyncio
-import pandas as pd
-from datetime import datetime
 
 nest_asyncio.apply()  
 
@@ -71,28 +70,9 @@ combined_data
 
 # # 3. EDGAR 10-K Filing and Logo URLs
 
-# In[7]:
-
 
 get_ipython().system('pip install edgar')
 get_ipython().system('pip install sec-api')
-
-
-# In[9]:
-
-
-import os
-import random
-import string
-import requests
-import pandas as pd
-from datetime import datetime
-import time
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from requests.exceptions import RequestException
-import requests
-from bs4 import BeautifulSoup
-
 
 def generate_random_email():
     email_domain = "@example.com"
@@ -144,11 +124,6 @@ def get_cik_for_ticker(ticker):
 
 # # 4. Companies' core info
 
-# In[10]:
-
-
-import requests
-import pandas as pd
 
 def comp_info(ticker):
     API_KEY = 'NJVQJFLY9SSGTP55'
@@ -208,16 +183,6 @@ def info_other(ticker):
 
 get_ipython().system('pip install pandas-datareader')
 
-
-# In[12]:
-
-
-import pandas_datareader as pdr
-from pandas_datareader import DataReader
-import pandas as pd
-import datetime
-import matplotlib.pyplot as plt
-
 df = pd.DataFrame()
 
 def get_econ_index_data(start_date,end_date):
@@ -249,42 +214,15 @@ def get_econ_index_data(start_date,end_date):
 
 # # 6. Interactive UI using Flask
 
-# In[13]:
-
-
 get_ipython().system('pip install flask')
 get_ipython().system('pip install flask-ngrok')
 get_ipython().system('pip install plotly')
-
-
-# In[14]:
-
 
 get_ipython().system('pip install plotly>=5.0.0')
 get_ipython().system('pip install --upgrade flask-ngrok')
 
 
-# In[15]:
-
-
-import os
 os.environ['WERKZEUG_RUN_MAIN'] = 'true'
-
-import requests
-import pandas as pd
-import random
-import string
-import time
-from concurrent.futures import ThreadPoolExecutor
-from requests.exceptions import RequestException
-from flask import Flask, render_template, request
-import plotly
-import plotly.offline as pyo
-import plotly.graph_objects as go
-import plotly.express as px
-import plotly.colors as pc
-
-
 
 def get_data(symbol, start_date, end_date):
     api_key = 'cgn4mghr01qhveut0q00cgn4mghr01qhveut0q0g' 
@@ -367,8 +305,6 @@ def create_econ_index_chart(df):
                   width=800, height=600)
     
     return fig.to_html(full_html=False, include_plotlyjs='cdn')
-
-
     
 app = Flask(__name__, template_folder="my_templates")
 
@@ -423,155 +359,6 @@ def index():
 if __name__ == '__main__':
     app.run(debug=True)
 
-
-# # 7. SQL database for backup
-
-# In[ ]:
-
-
-# from sqlalchemy import create_engine, text
-# import psycopg2
-
-# conn = psycopg2.connect(
-#     host="localhost",
-#     port='5432',
-#     database="postgres",
-#     user="postgres",
-#     password="12345Abcde")
-
-# # Set autocommit to true to create database
-# conn.autocommit = True
-
-# #Create a new database
-# db_name = "finance_data_5400x"
-# cur = conn.cursor()
-# cur.execute(f"CREATE DATABASE {db_name}")
-
-# print(str(db_name)+' database has been successfully created in PostgreSQL.')
-
-
-# In[ ]:
-
-
-# # Write SQL queries and save them to a variable
-# statement = (
-#     '''
-#     CREATE TABLE econ_index(
-#         fred_id VARCHAR(255) PRIMARY KEY,
-#         Symbol VARCHAR(5),
-#         Date timestamp,
-#         NASDAQ_Composite_Index float,
-#         CPI float,
-#         PPI float,
-#         M1 float,
-#         M2 float,
-#         Unemployment_Rate float,
-#         Real_GDP float,
-#         Real_GDP_Per_Capita float,
-#         FED_Effective_Rate float,
-#         PCE float,
-#         Usd_Index float,
-#         Median_Household_Income float
-#     );
-#     ''',
-#     '''
-#     CREATE TABLE core (
-#         ticker_id SERIAL PRIMARY KEY,
-#         Symbol VARCHAR(5) UNIQUE,
-#         Name VARCHAR(255),
-#         AssetType VARCHAR(255),
-#         Description TEXT,
-#         Exchange VARCHAR(255),
-#         Currency VARCHAR(255),
-#         Country VARCHAR(255),
-#         Sector VARCHAR(255),
-#         Industry VARCHAR(255),
-#         Address VARCHAR(255),
-#         FiscalYearEnd VARCHAR(255),
-#         LatestQuarter VARCHAR(255),
-#         MarketCapitalization BIGINT,
-#         EBITDA BIGINT,
-#         PERatio FLOAT,
-#         PEGRatio FLOAT,
-#         BookValue FLOAT,
-#         DividendPerShare FLOAT,
-#         DividendYield FLOAT,
-#         EPS FLOAT,
-#         Beta FLOAT,
-#         Week52High FLOAT,
-#         Week52Low FLOAT,
-#         Day50MovingAverage FLOAT,
-#         Day200MovingAverage FLOAT,
-#         SharesOutstanding BIGINT
-#     );
-
-#     ''',
-#     '''
-#     CREATE TABLE ticker_info (
-#         ticker_id INTEGER PRIMARY KEY,
-#         Symbol VARCHAR(5),
-#         Date TIMESTAMP,
-#         CIK BIGINT,
-#         url_10k TEXT,
-#         logo_url TEXT,
-#         FOREIGN KEY (ticker_id) REFERENCES core (ticker_id)
-#     );    
-#     ''',
-#     '''
-#     CREATE TABLE ticker_data (
-#         ticker_id INTEGER PRIMARY KEY,
-#         Symbol VARCHAR(5),
-#         Date TIMESTAMP,
-#         Year_mon VARCHAR(7),
-#         Close FLOAT,
-#         High FLOAT,
-#         Low FLOAT,
-#         Open FLOAT,
-#         S VARCHAR(10),
-#         Volume FLOAT,
-#         FOREIGN KEY (ticker_id) REFERENCES core (ticker_id)
-#     );
-#     ''')
-
-# # Pass the connection string to a variable, conn_url
-# conn_url = 'postgresql://postgres:12345Abcde@localhost:5432/finance_data_5400x'
-
-# # Create an engine that connects to PostgreSQL server
-# engine = create_engine(conn_url)
-
-# # Establish a connection
-# connection = engine.connect()
-
-# # Create a connection and cursor
-# with psycopg2.connect(database=db_name, user="postgres", password="12345Abcde", host="localhost") as conn:
-#     with conn.cursor() as cur:
-#         for command in statement:
-#             cur.execute(command)
-        
-#         # commit the changes to the database
-#         conn.commit()
-        
-# print('The tables have been successfully created in PostgreSQL.')
-
-
-# In[ ]:
-
-
-# combined_data.to_sql(name='ticker_data', con=engine, if_exists='append', index=False)
-# #info_core(ticker).to_sql(name='core', con=engine, if_exists='append', index=False)
-# df.to_sql(name='econ_index', con=engine, if_exists='append', index=False)
-
-
-# In[ ]:
-
-
-#Set-up auto-updated back-up system based on most recent data accessed by users
-from datetime import datetime
-from sqlalchemy import create_engine
-from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy import create_engine, Column, Integer, Text, String, Float, ForeignKey, BigInteger,TIMESTAMP
-from sqlalchemy.orm import declarative_base, relationship
-from sqlalchemy.orm.session import sessionmaker
 
 # create a database engine 
 engine = create_engine('postgresql://postgres:12345Abcde@localhost:5432/finance_data_5400x')
@@ -765,57 +552,4 @@ def get_financial_data(ticker):
 
 # Example usage:
 get_financial_data('AAPL')
-
-    
-# def update_tables(ticker):
-#     # fetch the data
-#     financial_data, ticker_valid = fetch_financial_data(ticker)
-
-#     if ticker_valid and financial_data is not None:
-#         # update core table
-#         core_data = info_core(ticker)
-#         core_data.set_index('ticker_id', inplace=True)
-#         core_data.to_sql(name='core', con=engine, if_exists='replace', index=True)
-
-#         # update ticker_info table
-#         ticker_info = pd.DataFrame({
-#             'ticker_id': [financial_data['Symbol']],
-#             'Symbol': [financial_data['Symbol']],
-#             'Date': [financial_data['Date']],
-#             'CIK': [financial_data['CIK']],
-#             'url_10k': [financial_data['url_10k']],
-#             'logo_url': [financial_data['logo_url']]
-#         })
-#         ticker_info.set_index('ticker_id', inplace=True)
-#         ticker_info.to_sql(name='ticker_info', con=engine, if_exists='replace', index=True)
-
-
-# # 8. Spark infrastructure
-
-# In[ ]:
-
-
-# Convert to spark dataframe
-combined_data_sdf = spark.createDataFrame(combined_data)
-# core_sdf = spark.createDataFrame(core)
-# econ_index_sdf = spark.createDataFrame(econ_index)
-combined_data_sdf.show(10)
-
-
-# In[20]:
-
-
-get_ipython().system('pip install pipreqs')
-
-
-# In[23]:
-
-
-pip freeze > requirements.txt
-
-
-# In[ ]:
-
-
-
 
