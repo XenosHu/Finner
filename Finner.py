@@ -286,7 +286,8 @@ def create_econ_index_chart(df):
 def main():
     # Displaying an image with st.image
     image_url = "Finner.png"
-    st.image(image_url, use_column_width=True, caption="Your Image", output_format='PNG', style={'border-radius': '10px'})
+    centered_and_rounded_image = f'<div style="display: flex; justify-content: center;"><img src="{image_url}" style="border-radius: 10px;" /></div>'
+    st.markdown(centered_and_rounded_image, unsafe_allow_html=True)
     
     st.title("Finner: Financial Data Dashboard For Nasdaq Tickers")
 
