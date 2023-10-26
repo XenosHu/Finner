@@ -1,7 +1,6 @@
 aiohttp
 asyncio
 datetime
-finnhub
 finnhub-python
 multiprocessing
 nest_asyncio
