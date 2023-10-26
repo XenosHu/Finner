@@ -124,36 +124,36 @@ def info_core(ticker):
     df = comp_info(ticker)
 
     core = pd.DataFrame({
-        'Name': df.loc['Name']['Value'],
-        'Symbol': df.loc['Symbol']['Value'],
-        'AssetType': df.loc['AssetType']['Value'],
-        'Description': df.loc['Description']['Value'],
-        'Exchange': df.loc['Exchange']['Value'],
-        'Currency': df.loc['Currency']['Value'],
-        'Country': df.loc['Country']['Value'],
-        'Sector': df.loc['Sector']['Value'],
-        'Industry': df.loc['Industry']['Value'],
-        'Address': df.loc['Address']['Value'],
-        'FiscalYearEnd': df.loc['FiscalYearEnd']['Value'],
-        'LatestQuarter': df.loc['LatestQuarter']['Value'],
-        'MarketCapitalization': df.loc['MarketCapitalization']['Value'],
-        'EBITDA': df.loc['EBITDA']['Value'],
-        'PERatio': df.loc['PERatio']['Value'],
-        'PEGRatio': df.loc['PEGRatio']['Value'],
-        'BookValue': df.loc['BookValue']['Value'],
-        'DividendPerShare': df.loc['DividendPerShare']['Value'],
-        'DividendYield': df.loc['DividendYield']['Value'],
-        'EPS': df.loc['EPS']['Value'],
-        'Beta': df.loc['Beta']['Value'],
-        '52WeekHigh': df.loc['52WeekHigh']['Value'],
-        '52WeekLow': df.loc['52WeekLow']['Value'],
-        '50DayMovingAverage': df.loc['50DayMovingAverage']['Value'],
-        '200DayMovingAverage': df.loc['200DayMovingAverage']['Value'],
-        'SharesOutstanding': df.loc['SharesOutstanding']['Value']
+        'Name': df['Name']['Value'],
+        'Symbol': df['Symbol']['Value'],
+        'AssetType': df['AssetType']['Value'],
+        'Description': df['Description']['Value'],
+        'Exchange': df['Exchange']['Value'],
+        'Currency': df['Currency']['Value'],
+        'Country': df['Country']['Value'],
+        'Sector': df['Sector']['Value'],
+        'Industry': df['Industry']['Value'],
+        'Address': df['Address']['Value'],
+        'FiscalYearEnd': df['FiscalYearEnd']['Value'],
+        'LatestQuarter': df['LatestQuarter']['Value'],
+        'MarketCapitalization': df['MarketCapitalization']['Value'],
+        'EBITDA': df['EBITDA']['Value'],
+        'PERatio': df['PERatio']['Value'],
+        'PEGRatio': df['PEGRatio']['Value'],
+        'BookValue': df['BookValue']['Value'],
+        'DividendPerShare': df['DividendPerShare']['Value'],
+        'DividendYield': df['DividendYield']['Value'],
+        'EPS': df['EPS']['Value'],
+        'Beta': df['Beta']['Value'],
+        '52WeekHigh': df['52WeekHigh']['Value'],
+        '52WeekLow': df['52WeekLow']['Value'],
+        '50DayMovingAverage': df['50DayMovingAverage']['Value'],
+        '200DayMovingAverage': df['200DayMovingAverage']['Value'],
+        'SharesOutstanding': df['SharesOutstanding']['Value']
     }, index=[0])
 
     core = core.transpose()
-    return(core)
+    return core
 
 def info_other(ticker):
     df = comp_info(ticker)
