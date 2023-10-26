@@ -289,7 +289,7 @@ def main():
     left_co, cent_co, last_co = st.columns(3)
 
     with cent_co:
-        st.image(image_url, use_container_width=True)
+        st.image(image_url)
     
     st.title("Finner: Financial Data Dashboard For Nasdaq Tickers")
 
