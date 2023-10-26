@@ -17,7 +17,7 @@ from pandas_datareader import DataReader
 from plotly import colors, express, graph_objects, offline
 from requests.exceptions import RequestException
 import requests
-import streamlit
+import streamlit as st
 
 ticker_name = pd.DataFrame(pd.read_csv("nasdaq-listed.csv"))
 
