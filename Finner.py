@@ -123,37 +123,40 @@ def comp_info(ticker):
 def info_core(ticker):
     df = comp_info(ticker)
 
-    core = pd.DataFrame({
-        'Name': df['Name']['Value'],
-        'Symbol': df['Symbol']['Value'],
-        'AssetType': df['AssetType']['Value'],
-        'Description': df['Description']['Value'],
-        'Exchange': df['Exchange']['Value'],
-        'Currency': df['Currency']['Value'],
-        'Country': df['Country']['Value'],
-        'Sector': df['Sector']['Value'],
-        'Industry': df['Industry']['Value'],
-        'Address': df['Address']['Value'],
-        'FiscalYearEnd': df['FiscalYearEnd']['Value'],
-        'LatestQuarter': df['LatestQuarter']['Value'],
-        'MarketCapitalization': df['MarketCapitalization']['Value'],
-        'EBITDA': df['EBITDA']['Value'],
-        'PERatio': df['PERatio']['Value'],
-        'PEGRatio': df['PEGRatio']['Value'],
-        'BookValue': df['BookValue']['Value'],
-        'DividendPerShare': df['DividendPerShare']['Value'],
-        'DividendYield': df['DividendYield']['Value'],
-        'EPS': df['EPS']['Value'],
-        'Beta': df['Beta']['Value'],
-        '52WeekHigh': df['52WeekHigh']['Value'],
-        '52WeekLow': df['52WeekLow']['Value'],
-        '50DayMovingAverage': df['50DayMovingAverage']['Value'],
-        '200DayMovingAverage': df['200DayMovingAverage']['Value'],
-        'SharesOutstanding': df['SharesOutstanding']['Value']
-    }, index=[0])
+    if df is not None and not df.empty:
+        core = pd.DataFrame({
+            'Name': df.loc[df.index == 'Name', 'Value'].iloc[0],
+            'Symbol': df.loc[df.index == 'Symbol', 'Value'].iloc[0],
+            'AssetType': df.loc[df.index == 'AssetType', 'Value'].iloc[0],
+            'Description': df.loc[df.index == 'Description', 'Value'].iloc[0],
+            'Exchange': df.loc[df.index == 'Exchange', 'Value'].iloc[0],
+            'Currency': df.loc[df.index == 'Currency', 'Value'].iloc[0],
+            'Country': df.loc[df.index == 'Country', 'Value'].iloc[0],
+            'Sector': df.loc[df.index == 'Sector', 'Value'].iloc[0],
+            'Industry': df.loc[df.index == 'Industry', 'Value'].iloc[0],
+            'Address': df.loc[df.index == 'Address', 'Value'].iloc[0],
+            'FiscalYearEnd': df.loc[df.index == 'FiscalYearEnd', 'Value'].iloc[0],
+            'LatestQuarter': df.loc[df.index == 'LatestQuarter', 'Value'].iloc[0],
+            'MarketCapitalization': df.loc[df.index == 'MarketCapitalization', 'Value'].iloc[0],
+            'EBITDA': df.loc[df.index == 'EBITDA', 'Value'].iloc[0],
+            'PERatio': df.loc[df.index == 'PERatio', 'Value'].iloc[0],
+            'PEGRatio': df.loc[df.index == 'PEGRatio', 'Value'].iloc[0],
+            'BookValue': df.loc[df.index == 'BookValue', 'Value'].iloc[0],
+            'DividendPerShare': df.loc[df.index == 'DividendPerShare', 'Value'].iloc[0],
+            'DividendYield': df.loc[df.index == 'DividendYield', 'Value'].iloc[0],
+            'EPS': df.loc[df.index == 'EPS', 'Value'].iloc[0],
+            'Beta': df.loc[df.index == 'Beta', 'Value'].iloc[0],
+            '52WeekHigh': df.loc[df.index == '52WeekHigh', 'Value'].iloc[0],
+            '52WeekLow': df.loc[df.index == '52WeekLow', 'Value'].iloc[0],
+            '50DayMovingAverage': df.loc[df.index == '50DayMovingAverage', 'Value'].iloc[0],
+            '200DayMovingAverage': df.loc[df.index == '200DayMovingAverage', 'Value'].iloc[0],
+            'SharesOutstanding': df.loc[df.index == 'SharesOutstanding', 'Value'].iloc[0]
+        }, index=[0])
 
-    core = core.transpose()
-    return core
+        core = core.transpose()
+        return core
+
+    return pd.DataFrame()  # Return an empty DataFrame if comp_info returns None or an empty DataFrame
 
 def info_other(ticker):
     df = comp_info(ticker)
