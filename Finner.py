@@ -333,7 +333,7 @@ def main():
                 st.write(f"**10-K URL:** [Link]({data['10-K_URL']})")
             
                 # Displaying Logo (resized)
-                st.markdown(f'<img src="{data['Logo_URL']}" alt="Logo for {data['Symbol']}" style="border-radius:50%;" width=100>', unsafe_allow_html=True)
+                st.markdown(f'<img src="{data["Logo_URL"]}" alt="Logo for {data["Symbol"]}" style="border-radius:50%;" width=100>', unsafe_allow_html=True)
                 
                 st.write("**Chart:**")
                 candlestick_data = fetch_candlestick_data(ticker)
