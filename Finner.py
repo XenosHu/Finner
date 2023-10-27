@@ -126,10 +126,10 @@ def info_core(ticker):
     if df is not None and not df.empty:
         print(df)  # Add this line to print the DataFrame for debugging
 
-        if 'Name' in df.index:
-            name_value = df.loc['Name', 'Value']
+        name_value = df.at['Name', 'Value'] if 'Name' in df.index else None
+        if name_value is not None:
+            print(f"Name: {name_value}")
         else:
-            name_value = None
             print("Warning: 'Name' not found in DataFrame index")
 
         core = pd.DataFrame({
