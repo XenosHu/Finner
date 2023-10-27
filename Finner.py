@@ -124,6 +124,7 @@ def info_core(ticker):
     df = comp_info(ticker)
 
     if df is not None and not df.empty:
+        print(df)  # Add this line to print the DataFrame for debugging
         core = pd.DataFrame({
             'Name': df.loc[df.index == 'Name', 'Value'].iloc[0],
             'Symbol': df.loc[df.index == 'Symbol', 'Value'].iloc[0],
@@ -156,7 +157,7 @@ def info_core(ticker):
         core = core.transpose()
         return core
 
-    return pd.DataFrame()  # Return an empty DataFrame if comp_info returns None or an empty DataFrame
+    return pd.DataFrame()   # Return an empty DataFrame if comp_info returns None or an empty DataFrame
 
 def info_other(ticker):
     df = comp_info(ticker)
