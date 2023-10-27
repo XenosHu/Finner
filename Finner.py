@@ -113,7 +113,7 @@ def get_cik_for_ticker(ticker):
 # # 4. Companies' core info
 
 def comp_info(ticker):
-    API_KEY = 'NJVQJFLY9SSGTP55'
+    API_KEY = '9PRUKP0VYXOA80BA'
     url = 'https://www.alphavantage.co/query?function=OVERVIEW&symbol={ticker}&apikey={API_KEY}'
     response = requests.get(url)
     data = response.json()
@@ -123,14 +123,11 @@ def comp_info(ticker):
 def info_core(ticker):
     df = comp_info(ticker)
 
-    if df is not None and not df.empty:
-        print(df)  # Add this line to print the DataFrame for debugging
-
-        name_value = df.at['Name', 'Value'] if 'Name' in df.index else None
-        if name_value is not None:
-            print(f"Name: {name_value}")
-        else:
-            print("Warning: 'Name' not found in DataFrame index")
+    if 'Name' in df.index:
+        name_value = df.loc['Name', 'Value']
+        print(f"Name: {name_value}")
+    else:
+        print("Warning: 'Name' not found in DataFrame index")
 
         core = pd.DataFrame({
             'Name': [name_value], 
