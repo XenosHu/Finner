@@ -133,7 +133,7 @@ def info_core(ticker):
             print("Warning: 'Name' not found in DataFrame index")
 
         core = pd.DataFrame({
-            'Name': df.loc[df.index == 'Name', 'Value'].iloc[0],
+            'Name': [name_value], 
             'Symbol': df.loc[df.index == 'Symbol', 'Value'].iloc[0],
             'AssetType': df.loc[df.index == 'AssetType', 'Value'].iloc[0],
             'Description': df.loc[df.index == 'Description', 'Value'].iloc[0],
