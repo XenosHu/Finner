@@ -117,19 +117,19 @@ def comp_info(ticker):
     url = 'https://www.alphavantage.co/query?function=OVERVIEW&symbol={ticker}&apikey={API_KEY}'
     response = requests.get(url)
     data = response.json()
-
-    # Check if the 'Name' key exists in the response
-    if 'Name' in data:
-        name_value = data['Name']
-        print(f"Name: {name_value}")
-    else:
-        print("Warning: 'Name' not found in response")
     
     df = pd.DataFrame(list(data.items()), columns=['Attribute', 'Value'])
     return df
 
 def info_core(ticker):
     df = comp_info(ticker)
+
+    if 'Name' in data:
+        name_value = data['Name']
+        print(f"Name: {name_value}")
+    else:
+        print("Warning: 'Name' not found in response")
+        
     core = pd.DataFrame({
         'Name': [name_value], 
         'Symbol': df.loc[df.index == 'Symbol', 'Value'].iloc[0],
