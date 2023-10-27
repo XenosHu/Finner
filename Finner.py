@@ -117,54 +117,50 @@ def comp_info(ticker):
     url = 'https://www.alphavantage.co/query?function=OVERVIEW&symbol={ticker}&apikey={API_KEY}'
     response = requests.get(url)
     data = response.json()
-    df = pd.DataFrame.from_dict(data, orient='index', columns=['Value'])
+
+    # Check if the 'Name' key exists in the response
+    if 'Name' in data:
+        name_value = data['Name']
+        print(f"Name: {name_value}")
+    else:
+        print("Warning: 'Name' not found in response")
+    
+    df = pd.DataFrame(list(data.items()), columns=['Attribute', 'Value'])
     return df
 
 def info_core(ticker):
     df = comp_info(ticker)
+    core = pd.DataFrame({
+        'Name': [name_value], 
+        'Symbol': df.loc[df.index == 'Symbol', 'Value'].iloc[0],
+        'AssetType': df.loc[df.index == 'AssetType', 'Value'].iloc[0],
+        'Description': df.loc[df.index == 'Description', 'Value'].iloc[0],
+        'Exchange': df.loc[df.index == 'Exchange', 'Value'].iloc[0],
+        'Currency': df.loc[df.index == 'Currency', 'Value'].iloc[0],
+        'Country': df.loc[df.index == 'Country', 'Value'].iloc[0],
+        'Sector': df.loc[df.index == 'Sector', 'Value'].iloc[0],
+        'Industry': df.loc[df.index == 'Industry', 'Value'].iloc[0],
+        'Address': df.loc[df.index == 'Address', 'Value'].iloc[0],
+        'FiscalYearEnd': df.loc[df.index == 'FiscalYearEnd', 'Value'].iloc[0],
+        'LatestQuarter': df.loc[df.index == 'LatestQuarter', 'Value'].iloc[0],
+        'MarketCapitalization': df.loc[df.index == 'MarketCapitalization', 'Value'].iloc[0],
+        'EBITDA': df.loc[df.index == 'EBITDA', 'Value'].iloc[0],
+        'PERatio': df.loc[df.index == 'PERatio', 'Value'].iloc[0],
+        'PEGRatio': df.loc[df.index == 'PEGRatio', 'Value'].iloc[0],
+        'BookValue': df.loc[df.index == 'BookValue', 'Value'].iloc[0],
+        'DividendPerShare': df.loc[df.index == 'DividendPerShare', 'Value'].iloc[0],
+        'DividendYield': df.loc[df.index == 'DividendYield', 'Value'].iloc[0],
+        'EPS': df.loc[df.index == 'EPS', 'Value'].iloc[0],
+        'Beta': df.loc[df.index == 'Beta', 'Value'].iloc[0],
+        '52WeekHigh': df.loc[df.index == '52WeekHigh', 'Value'].iloc[0],
+        '52WeekLow': df.loc[df.index == '52WeekLow', 'Value'].iloc[0],
+        '50DayMovingAverage': df.loc[df.index == '50DayMovingAverage', 'Value'].iloc[0],
+        '200DayMovingAverage': df.loc[df.index == '200DayMovingAverage', 'Value'].iloc[0],
+        'SharesOutstanding': df.loc[df.index == 'SharesOutstanding', 'Value'].iloc[0]
+    }, index=[0])
 
-    if df is not None and not df.empty:
-        print(df)  # Add this line to print the DataFrame for debugging
-
-        name_value = df.at['Name', 'Value'] if 'Name' in df.index else None
-        if name_value is not None:
-            print(f"Name: {name_value}")
-        else:
-            print("Warning: 'Name' not found in DataFrame index")
-
-        core = pd.DataFrame({
-            'Name': [name_value], 
-            'Symbol': df.loc[df.index == 'Symbol', 'Value'].iloc[0],
-            'AssetType': df.loc[df.index == 'AssetType', 'Value'].iloc[0],
-            'Description': df.loc[df.index == 'Description', 'Value'].iloc[0],
-            'Exchange': df.loc[df.index == 'Exchange', 'Value'].iloc[0],
-            'Currency': df.loc[df.index == 'Currency', 'Value'].iloc[0],
-            'Country': df.loc[df.index == 'Country', 'Value'].iloc[0],
-            'Sector': df.loc[df.index == 'Sector', 'Value'].iloc[0],
-            'Industry': df.loc[df.index == 'Industry', 'Value'].iloc[0],
-            'Address': df.loc[df.index == 'Address', 'Value'].iloc[0],
-            'FiscalYearEnd': df.loc[df.index == 'FiscalYearEnd', 'Value'].iloc[0],
-            'LatestQuarter': df.loc[df.index == 'LatestQuarter', 'Value'].iloc[0],
-            'MarketCapitalization': df.loc[df.index == 'MarketCapitalization', 'Value'].iloc[0],
-            'EBITDA': df.loc[df.index == 'EBITDA', 'Value'].iloc[0],
-            'PERatio': df.loc[df.index == 'PERatio', 'Value'].iloc[0],
-            'PEGRatio': df.loc[df.index == 'PEGRatio', 'Value'].iloc[0],
-            'BookValue': df.loc[df.index == 'BookValue', 'Value'].iloc[0],
-            'DividendPerShare': df.loc[df.index == 'DividendPerShare', 'Value'].iloc[0],
-            'DividendYield': df.loc[df.index == 'DividendYield', 'Value'].iloc[0],
-            'EPS': df.loc[df.index == 'EPS', 'Value'].iloc[0],
-            'Beta': df.loc[df.index == 'Beta', 'Value'].iloc[0],
-            '52WeekHigh': df.loc[df.index == '52WeekHigh', 'Value'].iloc[0],
-            '52WeekLow': df.loc[df.index == '52WeekLow', 'Value'].iloc[0],
-            '50DayMovingAverage': df.loc[df.index == '50DayMovingAverage', 'Value'].iloc[0],
-            '200DayMovingAverage': df.loc[df.index == '200DayMovingAverage', 'Value'].iloc[0],
-            'SharesOutstanding': df.loc[df.index == 'SharesOutstanding', 'Value'].iloc[0]
-        }, index=[0])
-
-        core = core.transpose()
-        return core
-
-    return pd.DataFrame()  # Return an empty DataFrame if comp_info returns None or an empty DataFrame
+    core = core.transpose()
+    return core
 
 def info_other(ticker):
     df = comp_info(ticker)
