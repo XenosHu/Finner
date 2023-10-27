@@ -114,7 +114,7 @@ def get_cik_for_ticker(ticker):
 
 def comp_info(ticker):
     API_KEY = '9PRUKP0VYXOA80BA'
-    url = 'https://www.alphavantage.co/query?function=OVERVIEW&symbol={ticker}&apikey={API_KEY}'
+    url = f'https://www.alphavantage.co/query?function=OVERVIEW&symbol={ticker}&apikey={API_KEY}'
     response = requests.get(url)
     data = response.json()
 
