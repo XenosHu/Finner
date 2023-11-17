@@ -1,6 +1,6 @@
 import streamlit as st
-from company_page import company_page
-from macroeconomics_page import macroeconomics_page
+from company import company_page
+from macroeconomics import macroeconomics_page
 
 def main_page():
     st.image("Finner.png")
