@@ -12,6 +12,7 @@ def analysis_page():
         VectorStoreToolkit,
         VectorStoreInfo
     )
+    st.title('GPT Financial Report Analyzer')
     
     # User inputs their OpenAI API key
     api_key = st.text_input("Enter your OpenAI API key", type="password")
@@ -56,7 +57,6 @@ def analysis_page():
                 verbose=True
             )
     
-            st.title('GPT Financial Report Analyzer')
             # Create a text input box for the user
             prompt = st.text_input('Input your prompt here')
     
