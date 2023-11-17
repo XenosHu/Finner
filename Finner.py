@@ -4,7 +4,7 @@ from macroeconomics import macroeconomics_page
 
 def main_page():
     st.image("Finner.png")
-    st.subheader(The Ultimate Financial Data Dashboard")
+    st.subheader("The Ultimate Financial Data Dashboard")
     st.write("created by Xenos Hu.")
 
 def main():
