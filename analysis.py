@@ -1,5 +1,5 @@
 
-def analysis():
+def analysis_page():
     import os
     from langchain.llms import OpenAI
     from langchain.embeddings import OpenAIEmbeddings
