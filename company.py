@@ -20,7 +20,7 @@ def company_page():
     import streamlit as st
     import time
 
-    st.title("Company Information")
+    
     # # 1. Set-up the environment
     ticker_name = pd.DataFrame(pd.read_csv("nasdaq-listed.csv"))
     
@@ -256,8 +256,9 @@ def company_page():
 
     with cent_co:
         st.image(image_url)
-    
-    st.title("Financial Data Dashboard For Nasdaq Tickers")
+
+    st.title("Company Information")
+    #st.title("Financial Data Dashboard For Nasdaq Tickers")
 
     ticker = st.text_input("Enter Ticker Symbol:")
     if st.button("Submit"):
