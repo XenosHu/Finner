@@ -1,8 +1,12 @@
+import streamlit as st
+from company_page import company_page
+from macroeconomics_page import macroeconomics_page
+
 def main_page():
     st.image("Finner.png")
     st.title("Welcome to the Financial Data Dashboard")
     st.write("Instructions or description about your dashboard.")
-    
+
 def main():
     st.sidebar.title("Navigation")
     page = st.sidebar.selectbox("Choose a page", 
@@ -15,5 +19,5 @@ def main():
     elif page == "Macroeconomic Indicators":
         macroeconomics_page()
 
-# Run the main function
-main()
+if __name__ == "__main__":
+    main()
