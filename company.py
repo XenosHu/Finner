@@ -254,8 +254,8 @@ def company_page():
     # image_url = "Finner.png"
     # left_co, cent_co, last_co = st.columns(3)
 
-    with cent_co:
-        st.image(image_url)
+    # with cent_co:
+    #     st.image(image_url)
 
     st.title("Company Information")
     #st.title("Financial Data Dashboard For Nasdaq Tickers")
