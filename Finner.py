@@ -9,7 +9,7 @@ def main_page():
 
 def main():
     st.sidebar.title("Navigation")
-    page = st.sidebar.selectbox("Choose a page", 
+    page = st.sidebar.selectbox("", 
                                 ["Main Page", "Company Information", "Macroeconomic Indicators"])
 
     if page == "Main Page":
