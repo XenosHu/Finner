@@ -291,89 +291,87 @@ def macroeconomics_page():
         
         st.plotly_chart(fig)
     
-    # Streamlit app
-    def main():
-        # Displaying an image with st.image
-        image_url = "Finner.png"
-        left_co, cent_co, last_co = st.columns(3)
-    
-        with cent_co:
-            st.image(image_url)
-        
-        st.title("Financial Data Dashboard For Nasdaq Tickers")
-    
-        ticker = st.text_input("Enter Ticker Symbol:")
-        if st.button("Submit"):
-            error = None
-            data = None
-            core = None
-            core_empty = True
-    
-            if not ticker:
-                error = "Please enter a valid ticker symbol."
-            else:
-                with ThreadPoolExecutor(max_workers=3) as executor:
-                    future_financial_data = executor.submit(get_financial_data, ticker)
-                    future_real_time_price = executor.submit(get_real_time_stock_price, ticker)
-                    future_previous_close_price = executor.submit(get_previous_close_price, ticker)
-    
-                financial_data, ticker_valid = future_financial_data.result()
-    
-                if not ticker_valid:
-                    error = "Invalid ticker symbol. Please enter it again."
-                elif financial_data is None:
-                    error = "Unable to fetch financial data. Please try again later."
-                else:
-                    data = financial_data
-                    real_time_price = future_real_time_price.result()
-                    previous_close_price = future_previous_close_price.result()
-                    if real_time_price is not None and previous_close_price is not None:
-                        price_diff = real_time_price - previous_close_price
-                        price_diff_percent = (price_diff / previous_close_price) * 100
-                        data['RealTimePrice'] = {
-                            'value': real_time_price,
-                            'diff': price_diff,
-                            'diff_percent': price_diff_percent,
-                            'color': 'green' if price_diff >= 0 else 'red'
-                        }
-                    else:
-                        error = "Unable to fetch real-time stock price. Please try again later."
-                    core = info_core(ticker)
-                    core_empty = core.empty
-    
-                # Displaying financial data in a structured format
-                if data is not None:
-                    st.write("Financial Data:")
-                    st.write(f"**Symbol:** {data['Symbol']}")
-                    st.write(f"**CIK:** {data['CIK']}")
-                    st.write(f"**10-K URL:** [Link]({data['10-K_URL']})")
-                
-                    # Displaying Logo (resized)
-                    st.markdown(f'<img src="{data["Logo_URL"]}" alt="Logo for {data["Symbol"]}" style="border-radius:50%;" width=100>', unsafe_allow_html=True)
-                    
-                    st.write("**Chart:**")
-                    candlestick_data = fetch_candlestick_data(ticker)
-                    candlestick_chart = create_candlestick_chart(candlestick_data, ticker)
-                    st.plotly_chart(candlestick_chart)
-    
-                    color = 'green' if data['RealTimePrice']['diff'] >= 0 else 'red'
-    
-                    # Displaying the information with the specified color
-    
-                    st.write("**Real-Time Price:**")
-                    st.write(f"Value: {data['RealTimePrice']['value']}")
-                    st.write(f"Diff: <span style='color:{color}'>{data['RealTimePrice']['diff']:.2f}</span>", unsafe_allow_html=True)
-                    st.write(f"Diff Percent: <span style='color:{color}'>{data['RealTimePrice']['diff_percent']:.2f}%</span>", unsafe_allow_html=True)
-    
-            # Displaying core information
-            if not core_empty:
-                st.write("Core Information:")
-                st.write(core)
-    
-            # Displaying economic index chart
-            st.write("Economic Index Chart:")
-            economic_index = get_econ_index_data('1980-01-01', time.strftime("%Y-%m-%d", time.localtime(time.time())))
-            create_econ_index_chart(economic_index)
 
-# Run the main function
-main()
+    # Displaying an image with st.image
+    image_url = "Finner.png"
+    left_co, cent_co, last_co = st.columns(3)
+
+    with cent_co:
+        st.image(image_url)
+    
+    st.title("Financial Data Dashboard For Nasdaq Tickers")
+
+    ticker = st.text_input("Enter Ticker Symbol:")
+    if st.button("Submit"):
+        error = None
+        data = None
+        core = None
+        core_empty = True
+
+        if not ticker:
+            error = "Please enter a valid ticker symbol."
+        else:
+            with ThreadPoolExecutor(max_workers=3) as executor:
+                future_financial_data = executor.submit(get_financial_data, ticker)
+                future_real_time_price = executor.submit(get_real_time_stock_price, ticker)
+                future_previous_close_price = executor.submit(get_previous_close_price, ticker)
+
+            financial_data, ticker_valid = future_financial_data.result()
+
+            if not ticker_valid:
+                error = "Invalid ticker symbol. Please enter it again."
+            elif financial_data is None:
+                error = "Unable to fetch financial data. Please try again later."
+            else:
+                data = financial_data
+                real_time_price = future_real_time_price.result()
+                previous_close_price = future_previous_close_price.result()
+                if real_time_price is not None and previous_close_price is not None:
+                    price_diff = real_time_price - previous_close_price
+                    price_diff_percent = (price_diff / previous_close_price) * 100
+                    data['RealTimePrice'] = {
+                        'value': real_time_price,
+                        'diff': price_diff,
+                        'diff_percent': price_diff_percent,
+                        'color': 'green' if price_diff >= 0 else 'red'
+                    }
+                else:
+                    error = "Unable to fetch real-time stock price. Please try again later."
+                core = info_core(ticker)
+                core_empty = core.empty
+
+            # Displaying financial data in a structured format
+            if data is not None:
+                st.write("Financial Data:")
+                st.write(f"**Symbol:** {data['Symbol']}")
+                st.write(f"**CIK:** {data['CIK']}")
+                st.write(f"**10-K URL:** [Link]({data['10-K_URL']})")
+            
+                # Displaying Logo (resized)
+                st.markdown(f'<img src="{data["Logo_URL"]}" alt="Logo for {data["Symbol"]}" style="border-radius:50%;" width=100>', unsafe_allow_html=True)
+                
+                st.write("**Chart:**")
+                candlestick_data = fetch_candlestick_data(ticker)
+                candlestick_chart = create_candlestick_chart(candlestick_data, ticker)
+                st.plotly_chart(candlestick_chart)
+
+                color = 'green' if data['RealTimePrice']['diff'] >= 0 else 'red'
+
+                # Displaying the information with the specified color
+
+                st.write("**Real-Time Price:**")
+                st.write(f"Value: {data['RealTimePrice']['value']}")
+                st.write(f"Diff: <span style='color:{color}'>{data['RealTimePrice']['diff']:.2f}</span>", unsafe_allow_html=True)
+                st.write(f"Diff Percent: <span style='color:{color}'>{data['RealTimePrice']['diff_percent']:.2f}%</span>", unsafe_allow_html=True)
+
+        # Displaying core information
+        if not core_empty:
+            st.write("Core Information:")
+            st.write(core)
+
+        # Displaying economic index chart
+        st.write("Economic Index Chart:")
+        economic_index = get_econ_index_data('1980-01-01', time.strftime("%Y-%m-%d", time.localtime(time.time())))
+        create_econ_index_chart(economic_index)
+
+
