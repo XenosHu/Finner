@@ -1,6 +1,7 @@
 
 def analysis_page():
     import os
+    import tempfile
     from langchain.llms import OpenAI
     from langchain.embeddings import OpenAIEmbeddings
     import streamlit as st
@@ -26,8 +27,13 @@ def analysis_page():
         # Upload PDF file
         uploaded_file = st.file_uploader("Upload your annual report PDF", type="pdf")
         if uploaded_file:
-            # Load PDF Loader with uploaded file
-            loader = PyPDFLoader(uploaded_file)
+            # Save the uploaded file to a temporary file
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp_file:
+                tmp_file.write(uploaded_file.read())
+                temp_file_path = tmp_file.name
+    
+            # Now use this temporary file path with PyPDFLoader
+            loader = PyPDFLoader(temp_file_path)
             # Split pages from pdf 
             pages = loader.load_and_split()
             # Load documents into vector database aka ChromaDB
