@@ -2,8 +2,6 @@
 # coding: utf-8
 
 def company_page():
-    st.title("Company Information")
-    # # 1. Set-up the environment
     import asyncio
     import nest_asyncio
     import numpy as np
@@ -21,7 +19,9 @@ def company_page():
     import requests
     import streamlit as st
     import time
-    
+
+    st.title("Company Information")
+    # # 1. Set-up the environment
     ticker_name = pd.DataFrame(pd.read_csv("nasdaq-listed.csv"))
     
     nest_asyncio.apply()  
