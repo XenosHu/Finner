@@ -250,9 +250,9 @@ def company_page():
             return None
     
     # def main():
-    # Displaying an image with st.image
-    image_url = "Finner.png"
-    left_co, cent_co, last_co = st.columns(3)
+    # # Displaying an image with st.image
+    # image_url = "Finner.png"
+    # left_co, cent_co, last_co = st.columns(3)
 
     with cent_co:
         st.image(image_url)
