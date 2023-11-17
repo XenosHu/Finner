@@ -4,8 +4,8 @@ from macroeconomics import macroeconomics_page
 
 def main_page():
     st.image("Finner.png")
-    st.title("Welcome to the Financial Data Dashboard")
-    st.write("Instructions or description about your dashboard.")
+    st.subheader(The Ultimate Financial Data Dashboard")
+    st.write("created by Xenos Hu.")
 
 def main():
     st.sidebar.title("Navigation")
