@@ -327,4 +327,3 @@ def company_page():
             st.write("Core Information:")
             st.write(core)
 
-company_page()
