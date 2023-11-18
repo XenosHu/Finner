@@ -11,9 +11,15 @@ def analysis_page():
         create_vectorstore_agent,
         VectorStoreToolkit,
         VectorStoreInfo
-    
     )
 
+    def download_pdf(ticker, year):
+        url = f"https://www.annualreports.com/HostedData/AnnualReports/PDF/NASDAQ_{ticker}_{year}.pdf"
+        response = requests.get(url)
+        if response.status_code == 200:
+            return response.content
+        return None
+    
     st.title('GPT Financial Report Analyzer')
 
     # User inputs their OpenAI API key
@@ -27,25 +33,54 @@ def analysis_page():
         llm = OpenAI(temperature=0.1, verbose=True)
         embeddings = OpenAIEmbeddings()
 
-        uploaded_file = st.file_uploader("Upload your document (PDF or HTML)", type=["pdf", "html", "htm"])
-        if uploaded_file:
-            file_type = uploaded_file.type
-            suffix = ".pdf"
+        uploaded_file = st.file_uploader("Or upload a PDF document", type="pdf")
 
-            with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp_file:
-                if file_type == "application/pdf":
-                    tmp_file.write(uploaded_file.read())
-                else:
-                    # Convert HTML to PDF
-                    pdfkit.from_file(uploaded_file, tmp_file.name)
-                
+        if ticker_input or uploaded_file:
+            current_year = datetime.now().year
+            pdf_content = None
+
+            if ticker_input:
+                for year in range(current_year, current_year - 5, -1):  # Try the last five years
+                    pdf_content = download_pdf(ticker_input, year)
+                    if pdf_content:
+                        break
+
+                if not pdf_content:
+                    st.error("No report found for the given ticker in the last 5 years.")
+                    return
+
+            if uploaded_file:
+                pdf_content = uploaded_file.read()
+
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp_file:
+                tmp_file.write(pdf_content)
                 temp_file_path = tmp_file.name
 
-            # Load and process the PDF file
             loader = PyPDFLoader(temp_file_path)
             pages = loader.load_and_split()
 
             store = Chroma.from_documents(pages, embeddings, collection_name='uploaded_document')
+
+        
+        # uploaded_file = st.file_uploader("Upload your document (PDF or HTML)", type=["pdf", "html", "htm"])
+        # if uploaded_file:
+        #     file_type = uploaded_file.type
+        #     suffix = ".pdf"
+
+        #     with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp_file:
+        #         if file_type == "application/pdf":
+        #             tmp_file.write(uploaded_file.read())
+        #         else:
+        #             # Convert HTML to PDF
+        #             pdfkit.from_file(uploaded_file, tmp_file.name)
+                
+        #         temp_file_path = tmp_file.name
+
+        #     # Load and process the PDF file
+        #     loader = PyPDFLoader(temp_file_path)
+        #     pages = loader.load_and_split()
+
+        #     store = Chroma.from_documents(pages, embeddings, collection_name='uploaded_document')
 
             vectorstore_info = VectorStoreInfo(
                 name="uploaded_document",
