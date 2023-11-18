@@ -83,23 +83,23 @@ def analysis_page():
     
             #     store = Chroma.from_documents(pages, embeddings, collection_name='uploaded_document')
     
-                vectorstore_info = VectorStoreInfo(
-                    name="uploaded_document",
-                    description="A document uploaded by the user",
-                    vectorstore=store
-                )
-    
-                toolkit = VectorStoreToolkit(vectorstore_info=vectorstore_info)
-                agent_executor = create_vectorstore_agent(llm=llm, toolkit=toolkit, verbose=True)
-    
-                prompt = st.text_input('Input your prompt here')
-                if prompt:
-                    response = agent_executor.run(prompt)
-                    st.write(response)
-    
-                    with st.expander('Document Similarity Search'):
-                        search = store.similarity_search_with_score(prompt)
-                        st.write(search[0][0].page_content)
+            vectorstore_info = VectorStoreInfo(
+                name="uploaded_document",
+                description="A document uploaded by the user",
+                vectorstore=store
+            )
+
+            toolkit = VectorStoreToolkit(vectorstore_info=vectorstore_info)
+            agent_executor = create_vectorstore_agent(llm=llm, toolkit=toolkit, verbose=True)
+
+            prompt = st.text_input('Input your prompt here')
+            if prompt:
+                response = agent_executor.run(prompt)
+                st.write(response)
+
+                with st.expander('Document Similarity Search'):
+                    search = store.similarity_search_with_score(prompt)
+                    st.write(search[0][0].page_content)
 
         
         # uploaded_file = st.file_uploader("Upload your annual report PDF", type="pdf")
