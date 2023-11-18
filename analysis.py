@@ -27,27 +27,15 @@ def analysis_page():
         embeddings = OpenAIEmbeddings()
 
         # Upload file
-        uploaded_file = st.file_uploader("Upload your document (PDF or HTML)", type=["pdf", "html", "htm"])
-        if uploaded_file:
-            file_type = uploaded_file.type
-            suffix = ".pdf" if file_type == "application/pdf" else ".html"
-            loader_class = PyPDFLoader if file_type == "application/pdf" else None
+uploaded_file = st.file_uploader("Upload your annual report PDF", type="pdf")
+    if uploaded_file:
+        # Save the uploaded file to a temporary file
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp_file:
+            tmp_file.write(uploaded_file.read())
+            temp_file_path = tmp_file.name
 
-            with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp_file:
-                tmp_file.write(uploaded_file.read())
-                temp_file_path = tmp_file.name
-
-            if loader_class:
-                loader = loader_class(temp_file_path)
-                pages = loader.load_and_split()
-            else:
-                # Using Html2TextTransformer for HTML files
-                with open(temp_file_path, 'r', encoding='utf-8') as file:
-                    html_content = file.read()
-                transformer = Html2TextTransformer()
-                text_content = transformer.transform(html_content)
-                pages = [text_content]  # Treating the transformed text as a single 'page'
-
+        # Now use this temporary file path with PyPDFLoader
+        loader = PyPDFLoader(temp_file_path)
             # Load documents into ChromaDB
             store = Chroma.from_documents(pages, embeddings, collection_name='annualreport')
 
