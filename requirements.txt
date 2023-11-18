@@ -70,6 +70,7 @@ packaging
 pandas
 pandas_datareader
 parso
+pdfkit
 pickleshare
 Pillow
 platformdirs
