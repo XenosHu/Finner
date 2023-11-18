@@ -4,6 +4,7 @@ def analysis_page():
     from langchain.llms import OpenAI
     from langchain.embeddings import OpenAIEmbeddings
     import streamlit as st
+    import pdfkit
     from langchain.document_loaders import PyPDFLoader  # Assuming HTMLLoader is available
     from langchain.vectorstores import Chroma
     from langchain.agents.agent_toolkits import (
@@ -26,48 +27,87 @@ def analysis_page():
         llm = OpenAI(temperature=0.1, verbose=True)
         embeddings = OpenAIEmbeddings()
 
-        uploaded_file = st.file_uploader("Upload your annual report PDF", type="pdf")
+        uploaded_file = st.file_uploader("Upload your document (PDF or HTML)", type=["pdf", "html", "htm"])
         if uploaded_file:
-            # Save the uploaded file to a temporary file
-            with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp_file:
-                tmp_file.write(uploaded_file.read())
+            file_type = uploaded_file.type
+            suffix = ".pdf"
+
+            with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp_file:
+                if file_type == "application/pdf":
+                    tmp_file.write(uploaded_file.read())
+                else:
+                    # Convert HTML to PDF
+                    pdfkit.from_file(uploaded_file, tmp_file.name)
+                
                 temp_file_path = tmp_file.name
-    
-            # Now use this temporary file path with PyPDFLoader
+
+            # Load and process the PDF file
             loader = PyPDFLoader(temp_file_path)
-            # Load documents into ChromaDB
-            store = Chroma.from_documents(pages, embeddings, collection_name='annualreport')
-    
-            # Create vectorstore info object
+            pages = loader.load_and_split()
+
+            store = Chroma.from_documents(pages, embeddings, collection_name='uploaded_document')
+
             vectorstore_info = VectorStoreInfo(
-                name="annual_report",
+                name="uploaded_document",
                 description="A document uploaded by the user",
                 vectorstore=store
             )
-    
-            # Convert the document store into a langchain toolkit
+
             toolkit = VectorStoreToolkit(vectorstore_info=vectorstore_info)
-    
-            # Add the toolkit to an end-to-end LC
-            agent_executor = create_vectorstore_agent(
-                llm=llm,
-                toolkit=toolkit,
-                verbose=True
-            )
-    
-            # Create a text input box for the user
+            agent_executor = create_vectorstore_agent(llm=llm, toolkit=toolkit, verbose=True)
+
             prompt = st.text_input('Input your prompt here')
-    
-            # If the user inputs a prompt
             if prompt:
-                # Then pass the prompt to the LLM
                 response = agent_executor.run(prompt)
-                # ...and write it out to the screen
                 st.write(response)
-    
-                # With a streamlit expander  
+
                 with st.expander('Document Similarity Search'):
-                    # Find the relevant pages
-                    search = store.similarity_search_with_score(prompt) 
-                    # Write out the first 
+                    search = store.similarity_search_with_score(prompt)
                     st.write(search[0][0].page_content)
+
+        
+        # uploaded_file = st.file_uploader("Upload your annual report PDF", type="pdf")
+        # if uploaded_file:
+        #     # Save the uploaded file to a temporary file
+        #     with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp_file:
+        #         tmp_file.write(uploaded_file.read())
+        #         temp_file_path = tmp_file.name
+    
+        #     # Now use this temporary file path with PyPDFLoader
+        #     loader = PyPDFLoader(temp_file_path)
+        #     # Load documents into ChromaDB
+        #     store = Chroma.from_documents(pages, embeddings, collection_name='annualreport')
+    
+        #     # Create vectorstore info object
+        #     vectorstore_info = VectorStoreInfo(
+        #         name="annual_report",
+        #         description="A document uploaded by the user",
+        #         vectorstore=store
+        #     )
+    
+        #     # Convert the document store into a langchain toolkit
+        #     toolkit = VectorStoreToolkit(vectorstore_info=vectorstore_info)
+    
+        #     # Add the toolkit to an end-to-end LC
+        #     agent_executor = create_vectorstore_agent(
+        #         llm=llm,
+        #         toolkit=toolkit,
+        #         verbose=True
+        #     )
+    
+        #     # Create a text input box for the user
+        #     prompt = st.text_input('Input your prompt here')
+    
+        #     # If the user inputs a prompt
+        #     if prompt:
+        #         # Then pass the prompt to the LLM
+        #         response = agent_executor.run(prompt)
+        #         # ...and write it out to the screen
+        #         st.write(response)
+    
+        #         # With a streamlit expander  
+        #         with st.expander('Document Similarity Search'):
+        #             # Find the relevant pages
+        #             search = store.similarity_search_with_score(prompt) 
+        #             # Write out the first 
+        #             st.write(search[0][0].page_content)
