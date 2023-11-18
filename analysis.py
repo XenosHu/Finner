@@ -4,7 +4,7 @@ def analysis_page():
     from langchain.llms import OpenAI
     from langchain.embeddings import OpenAIEmbeddings
     import streamlit as st
-    from langchain.document_loaders import PyPDFLoader, HTMLLoader, Html2TextTransformer  # Assuming HTMLLoader is available
+    from langchain.document_loaders import PyPDFLoader, Html2TextTransformer  # Assuming HTMLLoader is available
     from langchain.vectorstores import Chroma
     from langchain.agents.agent_toolkits import (
         create_vectorstore_agent,
