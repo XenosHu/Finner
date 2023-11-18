@@ -1,7 +1,7 @@
 def analysis_page():
     import os
     import tempfile
-    import datetime
+    from datetime import datetime
     from langchain.llms import OpenAI
     from langchain.embeddings import OpenAIEmbeddings
     import streamlit as st
