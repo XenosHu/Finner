@@ -32,7 +32,8 @@ def analysis_page():
         # Create instance of OpenAI LLM
         llm = OpenAI(temperature=0.1, verbose=True)
         embeddings = OpenAIEmbeddings()
-
+        
+        ticker_input = st.text_input("Enter Ticker Symbol:")
         uploaded_file = st.file_uploader("Or upload a PDF document", type="pdf")
 
         if ticker_input or uploaded_file:
@@ -60,45 +61,45 @@ def analysis_page():
             pages = loader.load_and_split()
 
             store = Chroma.from_documents(pages, embeddings, collection_name='uploaded_document')
-
-        
-        # uploaded_file = st.file_uploader("Upload your document (PDF or HTML)", type=["pdf", "html", "htm"])
-        # if uploaded_file:
-        #     file_type = uploaded_file.type
-        #     suffix = ".pdf"
-
-        #     with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp_file:
-        #         if file_type == "application/pdf":
-        #             tmp_file.write(uploaded_file.read())
-        #         else:
-        #             # Convert HTML to PDF
-        #             pdfkit.from_file(uploaded_file, tmp_file.name)
-                
-        #         temp_file_path = tmp_file.name
-
-        #     # Load and process the PDF file
-        #     loader = PyPDFLoader(temp_file_path)
-        #     pages = loader.load_and_split()
-
-        #     store = Chroma.from_documents(pages, embeddings, collection_name='uploaded_document')
-
-            vectorstore_info = VectorStoreInfo(
-                name="uploaded_document",
-                description="A document uploaded by the user",
-                vectorstore=store
-            )
-
-            toolkit = VectorStoreToolkit(vectorstore_info=vectorstore_info)
-            agent_executor = create_vectorstore_agent(llm=llm, toolkit=toolkit, verbose=True)
-
-            prompt = st.text_input('Input your prompt here')
-            if prompt:
-                response = agent_executor.run(prompt)
-                st.write(response)
-
-                with st.expander('Document Similarity Search'):
-                    search = store.similarity_search_with_score(prompt)
-                    st.write(search[0][0].page_content)
+    
+            
+            # uploaded_file = st.file_uploader("Upload your document (PDF or HTML)", type=["pdf", "html", "htm"])
+            # if uploaded_file:
+            #     file_type = uploaded_file.type
+            #     suffix = ".pdf"
+    
+            #     with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp_file:
+            #         if file_type == "application/pdf":
+            #             tmp_file.write(uploaded_file.read())
+            #         else:
+            #             # Convert HTML to PDF
+            #             pdfkit.from_file(uploaded_file, tmp_file.name)
+                    
+            #         temp_file_path = tmp_file.name
+    
+            #     # Load and process the PDF file
+            #     loader = PyPDFLoader(temp_file_path)
+            #     pages = loader.load_and_split()
+    
+            #     store = Chroma.from_documents(pages, embeddings, collection_name='uploaded_document')
+    
+                vectorstore_info = VectorStoreInfo(
+                    name="uploaded_document",
+                    description="A document uploaded by the user",
+                    vectorstore=store
+                )
+    
+                toolkit = VectorStoreToolkit(vectorstore_info=vectorstore_info)
+                agent_executor = create_vectorstore_agent(llm=llm, toolkit=toolkit, verbose=True)
+    
+                prompt = st.text_input('Input your prompt here')
+                if prompt:
+                    response = agent_executor.run(prompt)
+                    st.write(response)
+    
+                    with st.expander('Document Similarity Search'):
+                        search = store.similarity_search_with_score(prompt)
+                        st.write(search[0][0].page_content)
 
         
         # uploaded_file = st.file_uploader("Upload your annual report PDF", type="pdf")
