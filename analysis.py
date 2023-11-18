@@ -4,12 +4,13 @@ def analysis_page():
     from langchain.llms import OpenAI
     from langchain.embeddings import OpenAIEmbeddings
     import streamlit as st
-    from langchain.document_loaders import PyPDFLoader, HTMLLoader  # Assuming HTMLLoader is available
+    from langchain.document_loaders import PyPDFLoader, HTMLLoader, Html2TextTransformer  # Assuming HTMLLoader is available
     from langchain.vectorstores import Chroma
     from langchain.agents.agent_toolkits import (
         create_vectorstore_agent,
         VectorStoreToolkit,
         VectorStoreInfo
+    
     )
 
     st.title('GPT Financial Report Analyzer')
@@ -28,19 +29,24 @@ def analysis_page():
         # Upload file
         uploaded_file = st.file_uploader("Upload your document (PDF or HTML)", type=["pdf", "html", "htm"])
         if uploaded_file:
-            # Determine file type and process accordingly
             file_type = uploaded_file.type
             suffix = ".pdf" if file_type == "application/pdf" else ".html"
-            loader_class = PyPDFLoader if file_type == "application/pdf" else HTMLLoader
+            loader_class = PyPDFLoader if file_type == "application/pdf" else None
 
-            # Save the uploaded file to a temporary file
             with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp_file:
                 tmp_file.write(uploaded_file.read())
                 temp_file_path = tmp_file.name
 
-            # Load document using appropriate loader
-            loader = loader_class(temp_file_path)
-            pages = loader.load_and_split()
+            if loader_class:
+                loader = loader_class(temp_file_path)
+                pages = loader.load_and_split()
+            else:
+                # Using Html2TextTransformer for HTML files
+                with open(temp_file_path, 'r', encoding='utf-8') as file:
+                    html_content = file.read()
+                transformer = Html2TextTransformer()
+                text_content = transformer.transform(html_content)
+                pages = [text_content]  # Treating the transformed text as a single 'page'
 
             # Load documents into ChromaDB
             store = Chroma.from_documents(pages, embeddings, collection_name='annualreport')
