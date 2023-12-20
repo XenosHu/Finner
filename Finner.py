@@ -3,6 +3,12 @@ from company import company_page
 from macroeconomics import macroeconomics_page
 from analysis import analysis_page
 
+__import__('pysqlite3')
+import sys
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+
+import sqlite3
+
 def main_page():
     st.image("Finner.png")
     st.subheader("The Ultimate Financial Data Dashboard")
