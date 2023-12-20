@@ -89,6 +89,7 @@ Pygments
 Pympler
 pypdf
 pyrsistent
+pysqlite3-binary
 python-dateutil
 python-dotenv
 pytz
