@@ -1,13 +1,14 @@
-import streamlit as st
-from company import company_page
-from macroeconomics import macroeconomics_page
-from analysis import analysis_page
-
 __import__('pysqlite3')
 import sys
 sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
 import sqlite3
+import streamlit as st
+from company import company_page
+from macroeconomics import macroeconomics_page
+from analysis import analysis_page
+
+
 
 def main_page():
     st.image("Finner.png")
